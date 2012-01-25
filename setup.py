@@ -10,9 +10,7 @@ version = '1.0'
 long_description = ''
 entry_point = 'raisin.recipe.dashboard:Recipe'
 entry_points = {"zc.buildout": [
-                  "default = raisin.recipe.dashboard:BuildRecipe",
-                  "build = raisin.recipe.dashboard:BuildRecipe",
-                  "config = raisin.recipe.dashboard:ConfigureRecipe",
+                  "default = raisin.recipe.dashboard:Recipe",
                ]}
 
 setup(name='raisin.recipe.dashboard',
