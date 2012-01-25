@@ -260,6 +260,7 @@ def main(options, buildout):
         dimensions[col] = buildout[options['vocabulary']][col]
     title = options['title']        
     dashboard(title, lines, output_file, dimensions, rows, cols, filters)
+    return output_file
 
 if __name__ == '__main__':
     main()
