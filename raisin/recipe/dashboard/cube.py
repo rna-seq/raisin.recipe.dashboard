@@ -1,3 +1,5 @@
+import itertools
+
 class Cube:
 
     def __init__(self, accessions, rows, cols):
