@@ -1,6 +1,5 @@
 import csv
 import StringIO
-import itertools
 from cube import Cube
 
 class Experiments(Cube):
