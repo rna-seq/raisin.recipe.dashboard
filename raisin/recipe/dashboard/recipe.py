@@ -1,5 +1,4 @@
 from dashboard import main
-import RestrictedPython
 
 class Recipe(object):
 
