@@ -1,0 +1,9 @@
+* text=auto !eol
+raisin/__init__.py -text
+raisin/recipe/__init__.py -text
+raisin/recipe/dashboard/__init__.py -text
+raisin/recipe/dashboard/build.py -text
+raisin/recipe/dashboard/config.py -text
+raisin/recipe/dashboard/cube.py -text
+raisin/recipe/dashboard/dashboard.py -text
+/setup.py -text
