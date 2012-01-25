@@ -8,7 +8,7 @@ class Recipe(object):
         self.options = options
 
     def install(self):
-        main(self.options, self.buildout)
+        return main(self.options, self.buildout)
 
     def update(self):
-        self.install()
+        return self.install()
