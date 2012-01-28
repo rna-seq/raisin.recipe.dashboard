@@ -56,6 +56,8 @@ class Cube:
     def add_accession_files(self, accession_id, files, rows_key, cols_key):
         for file in files:
             for key, value in file.items():
+                if key is None:
+                    raise AttributeError
                 if key in self.attributes:
                     self.attributes[key].add(value)
                 else:
