@@ -9,6 +9,9 @@ class Experiments(Cube):
         self.replicates = Replicates(accessions, self.dimensions, ["replicate"])
 
     def add_accession_files(self, accession_id, files, rows_key, cols_key):
+        for file in files:
+            if file is None:
+                raise AttributeError
         Cube.add_accession_files(self, accession_id, files, rows_key, cols_key)
 
     def get_replicates(self):
@@ -49,11 +52,20 @@ class Replicates(Cube):
         output.write("</tr>\n")
     
         for replicate in replicates:
+            number = 0
             for file in replicate[1]:
+                number += 1
                 output.write("<tr>\n")
                 for header in headers:
                     if header == "file_location":
-                        output.write("""<td><a href="%s">%s</a></td>\n""" % (file[header], file['view']))
+                        if len(replicate[1]) == 1:
+                            view = "Raw data"
+                        else:
+                            if file['type'] == 'fastq':
+                                view = 'FastqRd%d' % number
+                            if file['type'] == 'fasta':
+                                view = 'FastaRd%d' % number
+                        output.write("""<td><a href="%s">%s</a></td>\n""" % (file[header], view))
                     elif header in ["genome_version"]:
                         output.write("""<td><a href="%s" title="%s">%s</a></td>\n""" % (file["genome_url"], file["genome"], file["genome_version"]))
                     elif header in ["annotation_version"]:
@@ -66,8 +78,9 @@ class Replicates(Cube):
         
 
 class Table:
-    def __init__(self, title, cube, dimensions, attribute_categories):
+    def __init__(self, title, description, cube, dimensions, attribute_categories):
         self.title = title
+        self._description = description
         self.cube = cube
         self.replicates = cube.get_replicates()    
         self.dimensions = dimensions
@@ -77,6 +90,7 @@ class Table:
         output = StringIO.StringIO()
         self.header(output)
         self.heading(output)
+        self.description(output)
         self.top(output)
         self.rows_header(output)
         self.columns_header(output)
@@ -91,7 +105,7 @@ class Table:
         output.write("<html>\n")
         output.write("""
         <head>
-            <title>Dashboard</title>
+            <title>%s</title>
             <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen, projection">
             <link rel="stylesheet" href="../../css/typography.css" type="text/css" media="screen, projection">
             <link rel="stylesheet" href="../../css/forms.css" type="text/css" media="screen, projection">
@@ -108,10 +122,13 @@ class Table:
             </script> 
         </head>
         <body>
-        """)
+        """ % self.title)
 
     def heading(self, output):
         output.write("<h1>%s</h1>\n" % self.title)
+
+    def description(self, output):
+        output.write("<div>%s</div>\n" % self._description)
 
     def top(self, output):
         output.write('''<div class="workspace_results"><table><tbody>''')
@@ -195,12 +212,14 @@ def parse_attribute_categories():
                                                    'label':line['label']}
     return attribute_categories
   
-def get_table(title, lines, dimensions, rows, cols, filters):
+def get_table(title, description, lines, dimensions, rows, cols, filters):
     attribute_categories = parse_attribute_categories()
     accessions = {}
     for line in lines:
         ignore_line = False
         for key, value in filters.items():
+            if not line.has_key(key):
+                raise AttributeError
             if not line[key] == value:
                 ignore_line = True
                 continue
@@ -210,26 +229,27 @@ def get_table(title, lines, dimensions, rows, cols, filters):
             accessions[line['project_id'] + line['accession_id']].append(line)
         else:
             accessions[line['project_id'] + line['accession_id']] = [line]
-
+        if line.has_key(None):
+            raise AttributeError
     cube = Experiments(accessions, rows, cols)
 
-    return Table(title, cube, dimensions, attribute_categories)
+    return Table(title, description, cube, dimensions, attribute_categories)
 
-def render_table(title, lines, dimensions, rows, cols, filters={}):
-    table = get_table(title, lines, dimensions, rows, cols, filters)
+def render_table(title, description, lines, dimensions, rows, cols, filters={}):
+    table = get_table(title, description, lines, dimensions, rows, cols, filters)
     return table.render()
 
 def get_lines(file_name):
     lines = csv.DictReader(open(file_name, 'r'), 
-                           delimiter=',', 
+                           delimiter='\t', 
                            skipinitialspace=True)
     return lines
 
-def dashboard(title, lines, output_file, dimensions, rows, cols, filters):
+def dashboard(title, description, lines, output_file, dimensions, rows, cols, filters):
     """
     Create the dashboard page.
     """
-    html = render_table(title, lines, dimensions, rows, cols, filters)
+    html = render_table(title, description, lines, dimensions, rows, cols, filters)
     file = open(output_file, "w")
     file.write(html)
     file.close()
@@ -258,7 +278,8 @@ def main(options, buildout):
     for col in cols:
         dimensions[col] = buildout[options['vocabulary']][col]
     title = options['title']        
-    dashboard(title, lines, output_file, dimensions, rows, cols, filters)
+    description = options['description']        
+    dashboard(title, description, lines, output_file, dimensions, rows, cols, filters)
     return output_file
 
 if __name__ == '__main__':
