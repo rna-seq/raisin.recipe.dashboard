@@ -40,7 +40,6 @@ setup(name='raisin.recipe.dashboard',
       install_requires=['setuptools',
                         'zc.buildout',
                         # -*- Extra requirements: -*-
-                        'RestrictedPython',
                         ],
       entry_points=entry_points,
       )
