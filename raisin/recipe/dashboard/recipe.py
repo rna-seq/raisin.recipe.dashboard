@@ -13,7 +13,7 @@ class Recipe(object):
             return dashboard.main(self.options, self.buildout)
         else:
             generic.main(self.options, self.buildout)
-            self.options['csv_file'] = 'dashboard.csv'
+            self.options['csv_file'] = 'static/generic/dashboard.csv'
             return dashboard.main(self.options, self.buildout)
         
     def update(self):
