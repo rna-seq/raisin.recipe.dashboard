@@ -186,7 +186,7 @@ def main(options, buildout):
                ]
 
     template = '\t'.join(['%s'] * len(headers)) + '\n'
-    output_file = open("dashboard.csv", "w")
+    output_file = open("static/generic/dashboard.csv", "w")
     output_file.write('\t'.join(headers) + '\n')
 
     parsed_profiles = {}
