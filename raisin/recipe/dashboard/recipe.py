@@ -1,5 +1,4 @@
 import dashboard
-import generic
 
 class Recipe(object):
 
@@ -9,12 +8,7 @@ class Recipe(object):
         self.options = options
 
     def install(self):
-        if 'csv_file' in self.options:
-            return dashboard.main(self.options, self.buildout)
-        else:
-            generic.main(self.options, self.buildout)
-            self.options['csv_file'] = 'static/generic/dashboard.csv'
-            return dashboard.main(self.options, self.buildout)
+        return dashboard.main(self.options, self.buildout)
         
     def update(self):
         return self.install()
