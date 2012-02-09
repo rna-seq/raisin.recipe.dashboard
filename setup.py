@@ -2,7 +2,6 @@
 """
 raisin.recipe.dashboard
 """
-import os
 from setuptools import setup, find_packages
 
 version = '1.0'
