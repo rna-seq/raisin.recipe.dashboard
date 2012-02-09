@@ -36,6 +36,7 @@ setup(name='raisin.recipe.dashboard',
       namespace_packages=['raisin', 'raisin.recipe'],
       include_package_data=True,
       zip_safe=False,
+      test_suite='raisin.recipe.dashboard.tests',
       install_requires=['setuptools',
                         'zc.buildout',
                         # -*- Extra requirements: -*-
