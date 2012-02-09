@@ -7,4 +7,5 @@ raisin/recipe/dashboard/dashboard.py -text
 raisin/recipe/dashboard/database.py -text
 raisin/recipe/dashboard/generic.py -text
 raisin/recipe/dashboard/recipe.py -text
+raisin/recipe/dashboard/tests/README.txt -text
 /setup.py -text
