@@ -1,23 +1,28 @@
-import os
+"""
+Test for dashboard.py
+"""
+
 import unittest
+from pkg_resources import get_provider
 
 from raisin.recipe.dashboard.dashboard import main
 from raisin.recipe.dashboard.dashboard import get_filters
+from raisin.recipe.dashboard.dashboard import get_lines
 
-class CubeTests(unittest.TestCase):
+PROVIDER = get_provider('raisin.recipe.dashboard')
+DATABASE = PROVIDER.get_resource_filename("", 'tests/workspace/database.csv')
+INDEX = PROVIDER.get_resource_filename("", 'tests/static/index.html')
 
-    def test_main(self):
-        options = {'csv_file':'workspace/database.csv',
-                   'output_file':'static/index.html',
-                   'rows':'read_type',
-                   'cols':'read_length'}
-        buildout = {}
-        main(options, buildout)
+
+class GetFiltersTests(unittest.TestCase):
+    """
+    Test the get_filters method in dashboard.py
+    """
 
     def test_get_filters_1(self):
         """One filter"""
         options = {'filters': 'read_type:76'}
-        self.failUnless(get_filters(options) == {'read_type':'76'})
+        self.failUnless(get_filters(options) == {'read_type': '76'})
 
     def test_get_filters_2(self):
         """Missing :"""
@@ -45,6 +50,42 @@ class CubeTests(unittest.TestCase):
         self.failUnless(get_filters(options) == {'mykey': 'myvalue'})
 
 
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+class GetLines(unittest.TestCase):
+    """
+    Test the get_lines method in dashboard.py
+    """
 
+    def test_get_lines_1(self):
+        """Empty"""
+        lines = get_lines(DATABASE)
+        self.failUnless(len(lines == 1))
+
+
+class MainTests(unittest.TestCase):
+    """
+    Test the main method in dashboard.py
+    """
+
+    def test_main(self):
+        """
+        Test the main method
+        """
+        options = {'csv_file': DATABASE,
+                   'output_file': INDEX,
+                   'rows': 'read_type',
+                   'cols': 'read_length',
+                   'vocabulary': 'read_vocabulary',
+                   'title': 'read dashboard',
+                   'description': 'Read type vs read length dashboard'}
+        buildout = {'read_vocabulary': {'read_type': 'Read Type',
+                                        'read_length': 'Read Length'}
+                    }
+        result = main(options, buildout)
+        self.failUnless(result == None)
+
+
+def test_suite():
+    """
+    Run the test suite
+    """
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
