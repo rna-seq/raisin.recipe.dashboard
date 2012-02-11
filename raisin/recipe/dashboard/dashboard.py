@@ -1,5 +1,20 @@
-class Dashboard:
-    
+def get_filters(options):
+    """
+    Parse the filters given in the options.
+    """
+    filters = {}
+    if 'filters' in options:
+        for filter in options['filters'].split('\n'):
+            if ':' in filter:
+                key, value = filter.split(':')
+                key = key.strip()
+                value = value.strip()
+                if len(key) > 0 and len(value) > 0:
+                    if key in filters:
+                        raise KeyError
+                    filters[key] = value
+    return filters
+
 
 def main(options, buildout):
     csv_file = options['csv_file']
