@@ -1,12 +1,21 @@
-import os
+"""
+Test for cube.py
+"""
+
 import unittest
 
 from raisin.recipe.dashboard.cube import Cube
 
 
 class CubeTests(unittest.TestCase):
+    """
+    Tests for the Cube class
+    """
 
-    def testCube(self):
+    def test_cube(self):
+        """
+        Fill the cube with some empty values and call all methods once.
+        """
         accessions = {}
         rows = []
         cols = []
@@ -24,5 +33,7 @@ class CubeTests(unittest.TestCase):
 
 
 def test_suite():
+    """
+    Run test suite
+    """
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
-
