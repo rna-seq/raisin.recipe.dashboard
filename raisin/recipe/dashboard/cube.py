@@ -1,8 +1,20 @@
+"""
+Implements a hype cube for creating a dashboard.
+"""
 import itertools
 
+
 class Cube:
+    """
+    Implementation of a cube that provides the rows and columns and their
+    values.
+    """
 
     def __init__(self, accessions, rows, cols):
+        """
+        Store the accessions and rows and cols and calculate the row values
+        and col values.
+        """
         self.rows = rows
         self.cols = cols
         self.dimensions = self.rows + self.cols
@@ -34,28 +46,49 @@ class Cube:
         self.row_values.sort()
         self.col_values = list(self.col_values)
         self.col_values.sort()
-        
+
     def get_rows(self):
+        """
+        Return the rows of the cube.
+        """
         return self.rows
 
     def get_cols(self):
+        """
+        Return the cols of the cube.
+        """
         return self.cols
 
     def get_dimension_values(self, dimension):
+        """
+        Return the values for the dimension
+        """
         return self.values[dimension]
 
     def get_row_values(self):
+        """
+        Return the row values.
+        """
         return self.row_values
-        #row_values = [self.get_dimension_values(dimension) for dimension in self.rows]
+        #row_values = [self.get_dimension_values(dimension)
+        # for dimension in self.rows]
         #return itertools.product(*row_values)
 
     def get_col_values(self):
-        col_values = [self.get_dimension_values(dimension) for dimension in self.cols]
+        """
+        Return the col values.
+        """
+        col_values = []
+        for dimension in self.cols:
+            col_values.append(self.get_dimension_values(dimension))
         return itertools.product(*col_values)
 
     def add_accession_files(self, accession_id, files, rows_key, cols_key):
-        for file in files:
-            for key, value in file.items():
+        """
+        Add an accession file.
+        """
+        for accession_file in files:
+            for key, value in accession_file.items():
                 if key is None:
                     raise AttributeError
                 if key in self.attributes:
