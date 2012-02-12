@@ -12,7 +12,9 @@ class Experiments(Cube):
 
     def __init__(self, accessions, rows, cols):
         Cube.__init__(self, accessions, rows, cols)
-        self.replicates = Replicates(accessions, self.dimensions, ["replicate"])
+        rows = self.dimensions
+        cols = ["replicate"]
+        self.replicates = Replicates(accessions, rows, cols)
 
     def add_accession_files(self, accession_id, files, rows_key, cols_key):
         for file in files:
@@ -23,6 +25,7 @@ class Experiments(Cube):
     def get_replicates(self):
         return self.replicates
 
+
 class Replicates(Cube):
 
     def __init__(self, accessions, rows, cols):
@@ -32,8 +35,8 @@ class Replicates(Cube):
     def add_accession_files(self, accession_id, files, rows_key, cols_key):
         Cube.add_accession_files(self, accession_id, files, rows_key, cols_key)
         key = (tuple(rows_key), tuple(cols_key))
-        if self.replicates.has_key(key):
-            self.replicates[key].append( (accession_id, files) )
+        if key in self.replicates:
+            self.replicates[key].append((accession_id, files))
         else:
             self.replicates[key] = [ (accession_id, files) ]
 
@@ -47,16 +50,17 @@ class Replicates(Cube):
         # Remove attribute with only one possible value
         #    elif len(self.attributes[key]) == 1:
         #        remove.append(key)
-        headers = [key for key in replicates[0][1][0].keys() if not key in remove]
+        headers = []
+        for key in replicates[0][1][0].keys():
+            if not key in remove:
+                headers.append(key)
 
-        
-    
         output.write("<table>\n")
         output.write("<tr>\n")
         for key in headers:
             output.write("<th>%s</th>\n" % key)
         output.write("</tr>\n")
-    
+
         for replicate in replicates:
             number = 0
             for file in replicate[1]:
@@ -84,9 +88,10 @@ class Replicates(Cube):
                     else:
                         output.write("<td>%s</td>\n" % file[header])
                 output.write("</tr>\n")
-       
+
         output.write("</table>\n")
-        
+
+
 class Table:
     def __init__(self, context, cube):
         self.title = context['title']
@@ -129,7 +134,7 @@ class Table:
                         document.getElementById(id).className='hide';
                         }
                     }
-            </script> 
+            </script>
         </head>
         <body>
         """ % self.title)
@@ -172,7 +177,7 @@ class Table:
         for item in self.cube.get_col_values():
             output.write("""<th class="col"><div>%s</div></th>\n""" % item[-1])
         output.write("</tr>\n")
-        
+
         #for dimension in self.cube.get_cols():
         #    for value in self.cube.get_dimension_values(dimension):
         #        output.write("""<th class="col"><div>%s</div></th>\n""" % value)
@@ -193,10 +198,12 @@ class Table:
                     div_id = "div%s-%s" % (row, col)
                     output.write("""<td class="data">\n""")
                     output.write("""<div style="width: 48px; ">\n""")
-                    output.write("""<a href="javascript:expandCollapse('%s');">%s</a>\n""" % (div_id, len(self.replicates.replicates[(key , ('1',))])))
+                    output.write("""<a href="javascript:expandCollapse('%s');">%s</a>\n""" % (div_id, len(self.replicates.replicates[(key, ('1',))])))
                     output.write("""</div>\n""")
                     output.write("""<div id="%s" class="hide">\n""" % div_id)
-                    self.replicates.produce_table(output, (key , ('1',)), self.attribute_categories)
+                    self.replicates.produce_table(output,
+                                                  (key, ('1',)),
+                                                  self.attribute_categories)
                     output.write("""</div>\n""")
                     output.write("""</td>\n""")
                 else:
