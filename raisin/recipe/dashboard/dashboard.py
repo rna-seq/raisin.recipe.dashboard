@@ -89,7 +89,11 @@ class Replicates(Cube):
                                                  file["genome"], 
                                                  file["genome_version"]))
                     elif header in ["annotation_version"]:
-                        output.write("""<td><a href="%s" title="%s">%s</a></td>\n""" % (file["annotation_url"], file["annotation"], file["annotation_version"]))
+                        template = ("""<td><a href="%s" title="%s">"""
+                                    """%s</a></td>\n""")
+                        output.write(template % (file["annotation_url"], 
+                                                 file["annotation"],
+                                                 file["annotation_version"]))
                     else:
                         output.write("<td>%s</td>\n" % file[header])
                 output.write("</tr>\n")
@@ -121,7 +125,9 @@ class Table:
         return html
 
     def header(self, output):
-        output.write("""<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">\n""")
+        html = ('''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"'''
+                ''' "http://www.w3.org/TR/html4/strict.dtd">\n''')
+        output.write(html)
         output.write("<html>\n")
         output.write("""
         <head>
@@ -218,7 +224,6 @@ class Table:
 
     def bottom(self, output):
         output.write("</tbody></table></div></body></html>")
-
 
 
 def get_table(context):
