@@ -208,7 +208,7 @@ class Table:
                     template = ("""<a href="javascript:expandCollapse"""
                                 """('%s');">%s</a>\n""")
                     output.write(template % (div_id,
-                                             len(self.replicates.replicates[(key, ('1',))])))
+                              len(self.replicates.replicates[(key, ('1',))])))
                     output.write("""</div>\n""")
                     output.write("""<div id="%s" class="hide">\n""" % div_id)
                     self.replicates.produce_table(output,
@@ -217,7 +217,9 @@ class Table:
                     output.write("""</div>\n""")
                     output.write("""</td>\n""")
                 else:
-                    output.write("""<td class="data"><div style="width: 48px; "></div></td>\n""")
+                    html = ("""<td class="data"><div style="width: 48px; ">"""
+                            """</div></td>\n""")
+                    output.write(html)
                 col += 1
             row += 1
             output.write("</tr>\n")
