@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+        <head>
+            <title>read dashboard</title>
+            <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen, projection">
+            <link rel="stylesheet" href="../../css/typography.css" type="text/css" media="screen, projection">
+            <link rel="stylesheet" href="../../css/forms.css" type="text/css" media="screen, projection">
+            <link rel="stylesheet" href="../../css/styles.css" type="text/css" media="screen, projection">
+            <script type="text/javascript">
+                function expandCollapse(id){
+                    if(document.getElementById(id).className == 'hide'){
+                        document.getElementById(id).className='show';
+                        }
+                    else{
+                        document.getElementById(id).className='hide';
+                        }
+                    }
+            </script> 
+        </head>
+        <body>
+        <h1>read dashboard</h1>
+<div>Read type vs read length dashboard</div>
+<div class="workspace_results"><table><tbody><tr>
+<th class="row_header"><div>Read Type</div></th>
+<th class="row_header"><div>Read Length</div></th>
+<th class="col"><div>NHEK</div></th>
+</tr>
+<tr>
+<th class="row">
+<div>2x37</div>
+</th>
+<th class="row">
+<div>37</div>
+</th>
+<td class="data">
+<div style="width: 48px; ">
+<a href="javascript:expandCollapse('div0-0');">1</a>
+</div>
+<div id="div0-0" class="hide">
+<table>
+<tr>
+<th>localization</th>
+<th>file_location</th>
+<th>lab</th>
+<th>dataType</th>
+<th>rnaExtract</th>
+<th>qualities</th>
+<th>accession_id</th>
+<th>project_id</th>
+<th>type</th>
+<th>species</th>
+<th>view</th>
+</tr>
+<tr>
+<td>CELL</td>
+<td><a href="${buildout:directory}/src/testdata/test2.bam">BAM1</a></td>
+<td></td>
+<td></td>
+<td>LONGPOLYA</td>
+<td>solexa</td>
+<td>TestBam</td>
+<td>Test</td>
+<td>bam</td>
+<td>Homo sapiens</td>
+<td>Alignment2</td>
+</tr>
+<tr>
+<td>CELL</td>
+<td><a href="${buildout:directory}/src/testdata/test1.bam">BAM2</a></td>
+<td></td>
+<td></td>
+<td>LONGPOLYA</td>
+<td>solexa</td>
+<td>TestBam</td>
+<td>Test</td>
+<td>bam</td>
+<td>Homo sapiens</td>
+<td>Alignment1</td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<th class="row">
+<div>2x76</div>
+</th>
+<th class="row">
+<div>76</div>
+</th>
+<td class="data">
+<div style="width: 48px; ">
+<a href="javascript:expandCollapse('div1-0');">1</a>
+</div>
+<div id="div1-0" class="hide">
+<table>
+<tr>
+<th>localization</th>
+<th>file_location</th>
+<th>lab</th>
+<th>dataType</th>
+<th>rnaExtract</th>
+<th>qualities</th>
+<th>accession_id</th>
+<th>project_id</th>
+<th>type</th>
+<th>species</th>
+<th>view</th>
+</tr>
+<tr>
+<td>CELL</td>
+<td><a href="${buildout:directory}/src/testdata/testB.r2.fastq.gz">FastqRd1</a></td>
+<td></td>
+<td></td>
+<td>LONGPOLYA</td>
+<td>solexa</td>
+<td>TestRun</td>
+<td>Test</td>
+<td>fastq</td>
+<td>Homo sapiens</td>
+<td>FastqRd3</td>
+</tr>
+<tr>
+<td>CELL</td>
+<td><a href="${buildout:directory}/src/testdata/testB.r1.fastq.gz">FastqRd2</a></td>
+<td></td>
+<td></td>
+<td>LONGPOLYA</td>
+<td>solexa</td>
+<td>TestRun</td>
+<td>Test</td>
+<td>fastq</td>
+<td>Homo sapiens</td>
+<td>FastqRd4</td>
+</tr>
+<tr>
+<td>CELL</td>
+<td><a href="${buildout:directory}/src/testdata/testA.r1.fastq.gz">FastqRd3</a></td>
+<td></td>
+<td></td>
+<td>LONGPOLYA</td>
+<td>solexa</td>
+<td>TestRun</td>
+<td>Test</td>
+<td>fastq</td>
+<td>Homo sapiens</td>
+<td>FastqRd2</td>
+</tr>
+<tr>
+<td>CELL</td>
+<td><a href="${buildout:directory}/src/testdata/testA.r2.fastq.gz">FastqRd4</a></td>
+<td></td>
+<td></td>
+<td>LONGPOLYA</td>
+<td>solexa</td>
+<td>TestRun</td>
+<td>Test</td>
+<td>fastq</td>
+<td>Homo sapiens</td>
+<td>FastqRd1</td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+</tbody></table></div></body></html>
