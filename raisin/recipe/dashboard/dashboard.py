@@ -38,7 +38,7 @@ class Replicates(Cube):
         if key in self.replicates:
             self.replicates[key].append((accession_id, files))
         else:
-            self.replicates[key] = [ (accession_id, files) ]
+            self.replicates[key] = [(accession_id, files)]
 
     def produce_table(self, output, key, attribute_categories):
         replicates = self.replicates[key]
@@ -85,13 +85,13 @@ class Replicates(Cube):
                     elif header in ["genome_version"]:
                         template = ("""<td><a href="%s" title="%s">"""
                                     """%s</a></td>\n""")
-                        output.write(template % (file["genome_url"], 
-                                                 file["genome"], 
+                        output.write(template % (file["genome_url"],
+                                                 file["genome"],
                                                  file["genome_version"]))
                     elif header in ["annotation_version"]:
                         template = ("""<td><a href="%s" title="%s">"""
                                     """%s</a></td>\n""")
-                        output.write(template % (file["annotation_url"], 
+                        output.write(template % (file["annotation_url"],
                                                  file["annotation"],
                                                  file["annotation_version"]))
                     else:
