@@ -5,14 +5,7 @@ Render a dashboard given settings defined in the buildout recipe.
 import csv
 
 
-def dashboard(title,
-              description,
-              lines,
-              output_file,
-              dimensions,
-              rows,
-              cols,
-              filters):
+def dashboard(context, output_file):
     """
     Create the dashboard page.
     """
@@ -52,27 +45,38 @@ def get_filters(options):
     return filters
 
 
+def get_dimensions(context):
+    """
+    Get the dimensions and their label. The vocabulary should define a label
+    for every row and col item.
+    """
+    dimensions = {}
+    for row in context['rows']:
+        dimensions[row] = context['vocabulary'][row]
+    for col in context['cols']:
+        dimensions[col] = context['vocabulary'][col]
+    return dimensions
+
+
 def main(options, buildout):
     """
     Fetch the buildout options and create the dashboard.
     """
-    csv_file = options['csv_file']
-    output_file = options['output_file']
-    rows = options['rows'].split('\n')
-    cols = options['cols'].split('\n')
+    # Prepare all variables necessary for rendering the dashboard by
+    # extracting them from the settings in the options and buildout
+    # dictionary
+    context = {}
+    context['rows'] = options['rows'].split('\n')
+    context['cols'] = options['cols'].split('\n')
+    context['filters'] = get_filters(options)
+    context['lines'] = get_lines(options['csv_file'])
+    context['vocabulary'] = buildout[options['vocabulary']]
+    context['dimensions'] = get_dimensions(context)
+    context['title'] = options['title']
+    context['description'] = options['description']
 
-    filters = get_filters(options)
+    # Write the dashboard to the output file
+    dashboard(context, options['output_file'])
 
-    lines = get_lines(csv_file)
-    dimensions = {}
-    for row in rows:
-        dimensions[row] = buildout[options['vocabulary']][row]
-    for col in cols:
-        dimensions[col] = buildout[options['vocabulary']][col]
-
-    title = options['title']
-    description = options['description']
-
-    dashboard(title, description, lines, output_file, dimensions, rows, cols,
-              filters)
-    return output_file
+    # Return the output file that buildout asks for
+    return options['output_file']
