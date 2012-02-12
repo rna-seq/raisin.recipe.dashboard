@@ -112,11 +112,10 @@ class MainTests(unittest.TestCase):
                    'output_file': INDEX,
                    'rows': 'read_type',
                    'cols': 'read_length',
-                   'vocabulary': 'read_vocabulary',
                    'title': 'read dashboard',
                    'description': 'Read type vs read length dashboard'}
-        buildout = {'read_vocabulary': {'read_type': 'Read Type',
-                                        'read_length': 'Read Length'}
+        buildout = {'vocabulary': {'read_type': 'Read Type',
+                                   'read_length': 'Read Length'}
                     }
         result = main(options, buildout)
         endswith = ("raisin.recipe.dashboard/raisin/recipe/dashboard/"
