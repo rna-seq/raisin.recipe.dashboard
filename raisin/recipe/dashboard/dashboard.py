@@ -174,28 +174,21 @@ class Table:
             output.write("""<th class="all_null"><div>&nbsp;</div></th>\n""")
 
     def columns_tree(self, output, col):
-        #for dimension in self.cube.get_cols():
-        #    colspan = len(self.cube.get_dimension_values(dimension))
-        #    output.write("""<th class="col" colspan="%s"><div>%s</div></th>\n""" % (colspan, self.dimensions[dimension]))
-
         col_index = self.cube.cols.index(col)
         for item in self.cube.get_col_values():
-            output.write("""<th class="col"><div>%s</div></th>\n""" % item[col_index])
+            template = """<th class="col"><div>%s</div></th>\n"""
+            output.write(template % item[col_index])
 
     def rows_header(self, output):
         output.write("""<tr>\n""")
         for dimension in self.cube.get_rows():
-            output.write("""<th class="row_header"><div>%s</div></th>\n""" % self.dimensions[dimension])
+            template = """<th class="row_header"><div>%s</div></th>\n"""
+            output.write(template % self.dimensions[dimension])
 
     def columns_header(self, output):
         for item in self.cube.get_col_values():
             output.write("""<th class="col"><div>%s</div></th>\n""" % item[-1])
         output.write("</tr>\n")
-
-        #for dimension in self.cube.get_cols():
-        #    for value in self.cube.get_dimension_values(dimension):
-        #        output.write("""<th class="col"><div>%s</div></th>\n""" % value)
-        #output.write("</tr>\n")
 
     def rows(self, output):
         row = 0
@@ -212,7 +205,10 @@ class Table:
                     div_id = "div%s-%s" % (row, col)
                     output.write("""<td class="data">\n""")
                     output.write("""<div style="width: 48px; ">\n""")
-                    output.write("""<a href="javascript:expandCollapse('%s');">%s</a>\n""" % (div_id, len(self.replicates.replicates[(key, ('1',))])))
+                    template = ("""<a href="javascript:expandCollapse"""
+                                """('%s');">%s</a>\n""")
+                    output.write(template % (div_id,
+                                             len(self.replicates.replicates[(key, ('1',))])))
                     output.write("""</div>\n""")
                     output.write("""<div id="%s" class="hide">\n""" % div_id)
                     self.replicates.produce_table(output,
