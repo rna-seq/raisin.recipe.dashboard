@@ -8,6 +8,7 @@ from pkg_resources import get_provider
 from raisin.recipe.dashboard.dashboard import main
 from raisin.recipe.dashboard.dashboard import get_filters
 from raisin.recipe.dashboard.dashboard import get_lines
+from raisin.recipe.dashboard.dashboard import get_dimensions
 
 PROVIDER = get_provider('raisin.recipe.dashboard')
 DATABASE = PROVIDER.get_resource_filename("", 'tests/workspace/database.csv')
@@ -56,9 +57,46 @@ class GetLines(unittest.TestCase):
     """
 
     def test_get_lines_1(self):
-        """Empty"""
+        """Just checking the fieldnames"""
         lines = get_lines(DATABASE)
-        self.failUnless(len(lines == 1))
+        fieldnames = ['project_id', 'accession_id', 'species', 'cell',
+                      'readType', 'read_length', 'qualities', 'file_location',
+                      'dataType', 'rnaExtract', 'localization', 'replicate',
+                      'lab', 'view', 'type']
+        self.failUnless(lines.fieldnames == fieldnames)
+
+
+class GetDimensions(unittest.TestCase):
+    """
+    Test the get_dimensions method in dashboard.py
+    """
+
+    def test_get_dimensions_1(self):
+        """Test one one row"""
+        dimensions = get_dimensions({'rows': [],
+                                     'cols': ['c1'],
+                                     'vocabulary': {'r1': 'Row 1',
+                                                    'c1': 'Col 1'}})
+        expected = {'c1': 'Col 1'}
+        self.failUnless(dimensions == expected)
+
+    def test_get_dimensions_2(self):
+        """Test one one col"""
+        dimensions = get_dimensions({'rows': [],
+                                     'cols': ['c1'],
+                                     'vocabulary': {'r1': 'Row 1',
+                                                    'c1': 'Col 1'}})
+        expected = {'c1': 'Col 1'}
+        self.failUnless(dimensions == expected)
+
+    def test_get_dimensions_3(self):
+        """Test one row and one col"""
+        dimensions = get_dimensions({'rows': ['r1'],
+                                     'cols': ['c1'],
+                                     'vocabulary': {'r1': 'Row 1',
+                                                    'c1': 'Col 1'}})
+        expected = {'c1': 'Col 1', 'r1': 'Row 1'}
+        self.failUnless(dimensions == expected)
 
 
 class MainTests(unittest.TestCase):
@@ -81,7 +119,9 @@ class MainTests(unittest.TestCase):
                                         'read_length': 'Read Length'}
                     }
         result = main(options, buildout)
-        self.failUnless(result == None)
+        endswith = ("raisin.recipe.dashboard/raisin/recipe/dashboard/"
+                    "tests/static/index.html")
+        self.failUnless(result.endswith(endswith))
 
 
 def test_suite():
