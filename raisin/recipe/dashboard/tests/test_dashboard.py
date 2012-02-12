@@ -22,12 +22,12 @@ class GetFiltersTests(unittest.TestCase):
 
     def test_get_filters_1(self):
         """One filter"""
-        options = {'filters': 'read_type:76'}
-        self.failUnless(get_filters(options) == {'read_type': '76'})
+        options = {'filters': 'readType:76'}
+        self.failUnless(get_filters(options) == {'readType': '76'})
 
     def test_get_filters_2(self):
         """Missing :"""
-        options = {'filters': 'read_type76'}
+        options = {'filters': 'readType76'}
         self.failUnless(get_filters(options) == {})
 
     def test_get_filters_3(self):
@@ -110,12 +110,19 @@ class MainTests(unittest.TestCase):
         """
         options = {'csv_file': DATABASE,
                    'output_file': INDEX,
-                   'rows': 'read_type',
-                   'cols': 'read_length',
+                   'rows': 'readType\nread_length',
+                   'cols': 'cell',
                    'title': 'read dashboard',
                    'description': 'Read type vs read length dashboard'}
-        buildout = {'vocabulary': {'read_type': 'Read Type',
-                                   'read_length': 'Read Length'}
+        buildout = {'vocabulary': {'readType': 'Read Type',
+                                   'read_length': 'Read Length',
+                                   'cell': 'Cell Type'},
+                    'categories': {'readType': 'Experiment',
+                                   'read_length': 'Experiment',
+                                   'localization': 'Experiment',
+                                   'view': 'Results',
+                                   'cell': 'Experiment',
+                                  },
                     }
         result = main(options, buildout)
         endswith = ("raisin.recipe.dashboard/raisin/recipe/dashboard/"
