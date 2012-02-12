@@ -80,9 +80,12 @@ class Replicates(Cube):
                             else:
                                 print replicate
                                 raise AttributeError
-                        output.write("""<td><a href="%s">%s</a></td>\n""" % (file[header], view))
+                        template = """<td><a href="%s">%s</a></td>\n"""
+                        output.write(template % (file[header], view))
                     elif header in ["genome_version"]:
-                        output.write("""<td><a href="%s" title="%s">%s</a></td>\n""" % (file["genome_url"], file["genome"], file["genome_version"]))
+                        template = ("""<td><a href="%s" title="%s">"""
+                                    """%s</a></td>\n""")
+                        output.write(template % (file["genome_url"], file["genome"], file["genome_version"]))
                     elif header in ["annotation_version"]:
                         output.write("""<td><a href="%s" title="%s">%s</a></td>\n""" % (file["annotation_url"], file["annotation"], file["annotation_version"]))
                     else:
@@ -166,7 +169,6 @@ class Table:
         col_index = self.cube.cols.index(col)
         for item in self.cube.get_col_values():
             output.write("""<th class="col"><div>%s</div></th>\n""" % item[col_index])
-
 
     def rows_header(self, output):
         output.write("""<tr>\n""")
