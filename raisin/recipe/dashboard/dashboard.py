@@ -85,7 +85,9 @@ class Replicates(Cube):
                     elif header in ["genome_version"]:
                         template = ("""<td><a href="%s" title="%s">"""
                                     """%s</a></td>\n""")
-                        output.write(template % (file["genome_url"], file["genome"], file["genome_version"]))
+                        output.write(template % (file["genome_url"], 
+                                                 file["genome"], 
+                                                 file["genome_version"]))
                     elif header in ["annotation_version"]:
                         output.write("""<td><a href="%s" title="%s">%s</a></td>\n""" % (file["annotation_url"], file["annotation"], file["annotation_version"]))
                     else:
