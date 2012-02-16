@@ -1,0 +1,12 @@
+/*.pyc
+/*.pyo
+raisin/*.pyc
+raisin/*.pyo
+raisin/recipe/*.pyc
+raisin/recipe/*.pyo
+raisin/recipe/dashboard/*.pyc
+raisin/recipe/dashboard/*.pyo
+raisin/recipe/dashboard/tests/*.pyc
+raisin/recipe/dashboard/tests/*.pyo
+raisin/recipe/dashboard/tests/static/*.pyc
+raisin/recipe/dashboard/tests/static/*.pyo

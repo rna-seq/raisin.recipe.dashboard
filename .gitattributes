@@ -1,15 +1,4 @@
 * text=auto !eol
-raisin/__init__.py -text
-raisin/recipe/__init__.py -text
-raisin/recipe/dashboard/__init__.py -text
-raisin/recipe/dashboard/cube.py -text
-raisin/recipe/dashboard/dashboard.py -text
 raisin/recipe/dashboard/dashboard.py_old -text
 raisin/recipe/dashboard/database.py_obsolete -text
-raisin/recipe/dashboard/tests/README.txt -text
-raisin/recipe/dashboard/tests/__init__.py -text
-raisin/recipe/dashboard/tests/static/index.html -text
-raisin/recipe/dashboard/tests/test_cube.py -text
-raisin/recipe/dashboard/tests/test_dashboard.py -text
 raisin/recipe/dashboard/tests/workspace/database.csv -text
-/setup.py -text
