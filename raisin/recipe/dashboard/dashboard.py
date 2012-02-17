@@ -108,7 +108,7 @@ class Table:
         self.cube = cube
         self.replicates = cube.get_replicates()
         self.dimensions = context['dimensions']
-        self.attribute_categories = context['categories']
+        self.attribute_categories = context['parameter_categories']
 
     def render(self):
         output = StringIO.StringIO()
@@ -297,9 +297,9 @@ def get_dimensions(context):
     """
     dimensions = {}
     for row in context['rows']:
-        dimensions[row] = context['vocabulary'][row]
+        dimensions[row] = context['parameter_vocabulary'][row]
     for col in context['cols']:
-        dimensions[col] = context['vocabulary'][col]
+        dimensions[col] = context['parameter_vocabulary'][col]
     return dimensions
 
 
@@ -315,11 +315,11 @@ def main(options, buildout):
     context['cols'] = options['cols'].split('\n')
     context['filters'] = get_filters(options)
     context['lines'] = get_lines(options['csv_file'])
-    context['vocabulary'] = buildout['vocabulary']
+    context['parameter_vocabulary'] = buildout['parameter_vocabulary']
     context['dimensions'] = get_dimensions(context)
     context['title'] = options['title']
     context['description'] = options['description']
-    context['categories'] = buildout['categories']
+    context['parameter_categories'] = buildout['parameter_categories']
 
     # Write the dashboard to the output file
     dashboard(context, options['output_file'])
