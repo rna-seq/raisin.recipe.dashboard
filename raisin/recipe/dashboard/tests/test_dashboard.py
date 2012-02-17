@@ -75,8 +75,8 @@ class GetDimensions(unittest.TestCase):
         """Test one one row"""
         dimensions = get_dimensions({'rows': [],
                                      'cols': ['c1'],
-                                     'vocabulary': {'r1': 'Row 1',
-                                                    'c1': 'Col 1'}})
+                                     'parameter_vocabulary': {'r1': 'Row 1',
+                                                              'c1': 'Col 1'}})
         expected = {'c1': 'Col 1'}
         self.failUnless(dimensions == expected)
 
@@ -84,8 +84,8 @@ class GetDimensions(unittest.TestCase):
         """Test one one col"""
         dimensions = get_dimensions({'rows': [],
                                      'cols': ['c1'],
-                                     'vocabulary': {'r1': 'Row 1',
-                                                    'c1': 'Col 1'}})
+                                     'parameter_vocabulary': {'r1': 'Row 1',
+                                                              'c1': 'Col 1'}})
         expected = {'c1': 'Col 1'}
         self.failUnless(dimensions == expected)
 
@@ -93,8 +93,8 @@ class GetDimensions(unittest.TestCase):
         """Test one row and one col"""
         dimensions = get_dimensions({'rows': ['r1'],
                                      'cols': ['c1'],
-                                     'vocabulary': {'r1': 'Row 1',
-                                                    'c1': 'Col 1'}})
+                                     'parameter_vocabulary': {'r1': 'Row 1',
+                                                              'c1': 'Col 1'}})
         expected = {'c1': 'Col 1', 'r1': 'Row 1'}
         self.failUnless(dimensions == expected)
 
@@ -114,15 +114,15 @@ class MainTests(unittest.TestCase):
                    'cols': 'cell',
                    'title': 'read dashboard',
                    'description': 'Read type vs read length dashboard'}
-        buildout = {'vocabulary': {'readType': 'Read Type',
-                                   'read_length': 'Read Length',
-                                   'cell': 'Cell Type'},
-                    'categories': {'readType': 'Experiment',
-                                   'read_length': 'Experiment',
-                                   'localization': 'Experiment',
-                                   'view': 'Results',
-                                   'cell': 'Experiment',
-                                  },
+        buildout = {'parameter_vocabulary': {'readType': 'Read Type',
+                                             'read_length': 'Read Length',
+                                             'cell': 'Cell Type'},
+                    'parameter_categories': {'readType': 'Experiment',
+                                             'read_length': 'Experiment',
+                                             'localization': 'Experiment',
+                                             'view': 'Results',
+                                             'cell': 'Experiment',
+                                            },
                     }
         result = main(options, buildout)
         endswith = ("raisin.recipe.dashboard/raisin/recipe/dashboard/"
