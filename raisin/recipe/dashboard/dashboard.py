@@ -132,13 +132,13 @@ class Table:
         output.write("""
         <head>
             <title>%s</title>
-            <link rel="stylesheet" href="static/css/reset.css"
+            <link rel="stylesheet" href="../../css/reset.css"
                   type="text/css" media="screen, projection">
-            <link rel="stylesheet" href="static/css/typography.css"
+            <link rel="stylesheet" href="../../css/typography.css"
                   type="text/css" media="screen, projection">
-            <link rel="stylesheet" href="static/css/forms.css" type="text/css"
+            <link rel="stylesheet" href="../../css/forms.css" type="text/css"
                   media="screen, projection">
-            <link rel="stylesheet" href="static/css/styles.css" type="text/css"
+            <link rel="stylesheet" href="../../css/styles.css" type="text/css"
                   media="screen, projection">
             <script type="text/javascript">
                 function expandCollapse(id){
