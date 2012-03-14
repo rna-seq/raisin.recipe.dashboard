@@ -4,7 +4,7 @@ Buildout recipe raisin.recipe.dashboard
 """
 
 import os
-from raisin.recipe.dashboard import dashboard
+from raisin.recipe.dashboard import main
 
 
 class Recipe(object):
@@ -28,7 +28,7 @@ class Recipe(object):
         dashboards_path = os.path.join(buildout_directory, 'dashboards')
         if not os.path.exists(dashboards_path):
             os.makedirs(dashboards_path)
-        return dashboard.main(self.options, self.buildout)
+        return main.main(self.options, self.buildout)
 
     def update(self):
         """
