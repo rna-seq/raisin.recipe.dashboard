@@ -251,17 +251,6 @@ def get_table(context):
     return Table(context, cube)
 
 
-def dashboard(context, output_file):
-    """
-    Create the dashboard page.
-    """
-    table = get_table(context)
-    html = table.render()
-    static_file = open(output_file, "w")
-    static_file.write(html)
-    static_file.close()
-
-
 def get_lines(file_name):
     """
     Get the lines from the csv file.
@@ -338,8 +327,13 @@ def main(options, buildout):
     context['description'] = options['description']
     context['parameter_categories'] = buildout['parameter_categories']
 
+    table = get_table(context)
+    html = table.render()
+
     # Write the dashboard to the output file
-    dashboard(context, options['output_file'])
+    static_file = open(options['output_file'], "w")
+    static_file.write(html)
+    static_file.close()
 
     # Return the output file that buildout asks for
     return options['output_file']
