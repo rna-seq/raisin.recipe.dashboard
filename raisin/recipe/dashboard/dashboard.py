@@ -305,11 +305,28 @@ def get_dimensions(context):
 
 def main(options, buildout):
     """
-    Fetch the buildout options and create the dashboard.
+    Put the configuration into a context dictionary and render the dashboard
+    as HTML.
+    
+    Context setup example:
+
+    rows: ['species', 'cell', 'rnaExtract', 'localization', 'label']
+    cols: ['readType']
+    filters: {}
+    lines: <csv.DictReader instance at 0x10138a1b8>
+    parameter_vocabulary: {'paired': 'Paired',
+                           ...
+                           'view': 'View'}
+    dimensions: {'localization': 'Localization', 
+                 'readType': 'Read type', 
+                 'label': 'Condition', 
+                 'cell': 'Cell type', 
+                 'rnaExtract': 'RNA extract', 
+                 'species': 'Species'}
+    parameter_categories: {'paired': 'Experiment', 
+                           ...
+                           'view': 'Results'}
     """
-    # Prepare all variables necessary for rendering the dashboard by
-    # extracting them from the settings in the options and buildout
-    # dictionary
     context = {}
     context['rows'] = options['rows'].split('\n')
     context['cols'] = options['cols'].split('\n')
