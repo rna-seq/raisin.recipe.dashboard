@@ -3,36 +3,52 @@ from raisin.recipe.dashboard.cube import Cube
 
 class Renderer:
 
-    def render(self, output, header, replicate, file, number):
+    def __init__(self, output):
+        self.output = output
+
+    def render(self, header, replicate, afile, number):
         if header == "file_location":
-            if len(replicate[1]) == 1:
-                view = "Raw data"
-            else:
-                if file['type'] == 'fastq':
-                    view = 'FastqRd%d' % number
-                elif file['type'] == 'fasta':
-                    view = 'FastaRd%d' % number
-                elif file['type'] == 'bam':
-                    view = 'BAM%d' % number
-                else:
-                    print replicate
-                    raise AttributeError
-            template = """<td><a href="%s">%s</a></td>\n"""
-            output.write(template % (file[header], view))
+            html = self.file_location(header, replicate, afile, number)
         elif header in ["genome_version"]:
-            template = ("""<td><a href="%s" title="%s">"""
-                        """%s</a></td>\n""")
-            output.write(template % (file["genome_url"],
-                                     file["genome"],
-                                     file["genome_version"]))
+            html = self.genome_version(header, replicate, afile, number)
         elif header in ["annotation_version"]:
-            template = ("""<td><a href="%s" title="%s">"""
-                        """%s</a></td>\n""")
-            output.write(template % (file["annotation_url"],
-                                     file["annotation"],
-                                     file["annotation_version"]))
+            html = self.annotation_version(header, replicate, afile, number)
         else:
-            output.write("<td>%s</td>\n" % file[header])
+            html = self.header(header, replicate, afile, number)
+        self.output.write(html)
+
+    def file_location(self, header, replicate, afile, number):
+        if len(replicate[1]) == 1:
+            view = "Raw data"
+        else:
+            if afile['type'] == 'fastq':
+                view = 'FastqRd%d' % number
+            elif afile['type'] == 'fasta':
+                view = 'FastaRd%d' % number
+            elif afile['type'] == 'bam':
+                view = 'BAM%d' % number
+            else:
+                print replicate
+                raise AttributeError
+        template = """<td><a href="%s">%s</a></td>\n"""
+        return template % (afile[header], view)
+
+    def genome_version(self, header, replicate, afile, number):
+        template = ("""<td><a href="%s" title="%s">"""
+                    """%s</a></td>\n""")
+        return template % (afile["genome_url"],
+                           afile["genome"],
+                           afile["genome_version"])
+
+    def annotation_version(self, header, replicate, afile, number):
+        template = ("""<td><a href="%s" title="%s">"""
+                    """%s</a></td>\n""")
+        return template % (afile["annotation_url"],
+                           afile["annotation"],
+                           afile["annotation_version"])
+
+    def header(self, header, replicate, afile, number):
+        return "<td>%s</td>\n" % afile[header]
 
 
 class Replicates(Cube):
@@ -70,15 +86,15 @@ class Replicates(Cube):
             output.write("<th>%s</th>\n" % key)
         output.write("</tr>\n")
 
-        renderer = Renderer()
+        renderer = Renderer(output)
 
         for replicate in replicates:
             number = 0
-            for file in replicate[1]:
+            for afile in replicate[1]:
                 number += 1
                 output.write("<tr>\n")
                 for header in headers:
-                    renderer.render(output, header, replicate, file, number)
+                    renderer.render(header, replicate, afile, number)
                 output.write("</tr>\n")
 
         output.write("</table>\n")
