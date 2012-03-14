@@ -6,8 +6,10 @@ import StringIO
 
 class Dashboard:
     def __init__(self, context, cube):
-        self.title = context['title']
-        self._description = context['description']
+        """
+        Store the contect and the cube. 
+        """
+        self.context = context
         self.cube = cube
         self.replicates = cube.get_replicates()
         self.dimensions = context['dimensions']
@@ -55,13 +57,13 @@ class Dashboard:
             </script>
         </head>
         <body>
-        """ % self.title)
+        """ % self.context['title'])
 
     def heading(self, output):
-        output.write("<h1>%s</h1>\n" % self.title)
+        output.write("<h1>%s</h1>\n" % self.context['title'])
 
     def description(self, output):
-        output.write("<div>%s</div>\n" % self._description)
+        output.write("<div>%s</div>\n" % self.context['description'])
 
     def top(self, output):
         output.write('''<div class="workspace_results"><table><tbody>''')
