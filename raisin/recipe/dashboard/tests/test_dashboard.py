@@ -5,10 +5,10 @@ Test for dashboard.py
 import unittest
 from pkg_resources import get_provider
 
-from raisin.recipe.dashboard.dashboard import main
-from raisin.recipe.dashboard.dashboard import get_filters
-from raisin.recipe.dashboard.dashboard import get_lines
-from raisin.recipe.dashboard.dashboard import get_dimensions
+from raisin.recipe.dashboard.main import main
+from raisin.recipe.dashboard.main import get_filters
+from raisin.recipe.dashboard.main import get_lines
+from raisin.recipe.dashboard.main import get_dimensions
 
 PROVIDER = get_provider('raisin.recipe.dashboard')
 DATABASE = PROVIDER.get_resource_filename("", 'tests/workspace/database.csv')
