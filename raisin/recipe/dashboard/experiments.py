@@ -1,6 +1,7 @@
 from raisin.recipe.dashboard.cube import Cube
 from raisin.recipe.dashboard.replicates import Replicates
 
+
 class Experiments(Cube):
 
     def __init__(self, accessions, rows, cols):
