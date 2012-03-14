@@ -5,103 +5,11 @@ Render a dashboard given settings defined in the buildout recipe.
 import csv
 import StringIO
 
-from raisin.recipe.dashboard.cube import Cube
+from raisin.recipe.dashboard.experiments import Experiments
+from raisin.recipe.dashboard.replicates import Replicates
 
 
-class Experiments(Cube):
-
-    def __init__(self, accessions, rows, cols):
-        Cube.__init__(self, accessions, rows, cols)
-        rows = self.dimensions
-        cols = ["replicate"]
-        self.replicates = Replicates(accessions, rows, cols)
-
-    def add_accession_files(self, accession_id, files, rows_key, cols_key):
-        for file in files:
-            if file is None:
-                raise AttributeError
-        Cube.add_accession_files(self, accession_id, files, rows_key, cols_key)
-
-    def get_replicates(self):
-        return self.replicates
-
-
-class Replicates(Cube):
-
-    def __init__(self, accessions, rows, cols):
-        self.replicates = {}
-        Cube.__init__(self, accessions, rows, cols)
-
-    def add_accession_files(self, accession_id, files, rows_key, cols_key):
-        Cube.add_accession_files(self, accession_id, files, rows_key, cols_key)
-        key = (tuple(rows_key), tuple(cols_key))
-        if key in self.replicates:
-            self.replicates[key].append((accession_id, files))
-        else:
-            self.replicates[key] = [(accession_id, files)]
-
-    def produce_table(self, output, key, attribute_categories):
-        replicates = self.replicates[key]
-
-        remove = self.dimensions
-        for key, value in attribute_categories.items():
-            if value == "":
-                remove.append(key)
-        # Remove attribute with only one possible value
-        #    elif len(self.attributes[key]) == 1:
-        #        remove.append(key)
-        headers = []
-        for key in replicates[0][1][0].keys():
-            if not key in remove:
-                headers.append(key)
-
-        output.write("<table>\n")
-        output.write("<tr>\n")
-        for key in headers:
-            output.write("<th>%s</th>\n" % key)
-        output.write("</tr>\n")
-
-        for replicate in replicates:
-            number = 0
-            for file in replicate[1]:
-                number += 1
-                output.write("<tr>\n")
-                for header in headers:
-                    if header == "file_location":
-                        if len(replicate[1]) == 1:
-                            view = "Raw data"
-                        else:
-                            if file['type'] == 'fastq':
-                                view = 'FastqRd%d' % number
-                            elif file['type'] == 'fasta':
-                                view = 'FastaRd%d' % number
-                            elif file['type'] == 'bam':
-                                view = 'BAM%d' % number
-                            else:
-                                print replicate
-                                raise AttributeError
-                        template = """<td><a href="%s">%s</a></td>\n"""
-                        output.write(template % (file[header], view))
-                    elif header in ["genome_version"]:
-                        template = ("""<td><a href="%s" title="%s">"""
-                                    """%s</a></td>\n""")
-                        output.write(template % (file["genome_url"],
-                                                 file["genome"],
-                                                 file["genome_version"]))
-                    elif header in ["annotation_version"]:
-                        template = ("""<td><a href="%s" title="%s">"""
-                                    """%s</a></td>\n""")
-                        output.write(template % (file["annotation_url"],
-                                                 file["annotation"],
-                                                 file["annotation_version"]))
-                    else:
-                        output.write("<td>%s</td>\n" % file[header])
-                output.write("</tr>\n")
-
-        output.write("</table>\n")
-
-
-class Table:
+class Dashboard:
     def __init__(self, context, cube):
         self.title = context['title']
         self._description = context['description']
@@ -228,7 +136,7 @@ class Table:
         output.write("</tbody></table></div></body></html>")
 
 
-def get_table(context):
+def get_cube(context):
     accessions = {}
     for line in context['lines']:
         ignore_line = False
@@ -247,8 +155,7 @@ def get_table(context):
         if None in line:
             raise AttributeError
     cube = Experiments(accessions, context['rows'], context['cols'])
-
-    return Table(context, cube)
+    return cube
 
 
 def get_lines(file_name):
@@ -327,8 +234,9 @@ def main(options, buildout):
     context['description'] = options['description']
     context['parameter_categories'] = buildout['parameter_categories']
 
-    table = get_table(context)
-    html = table.render()
+    cube = get_cube(context)
+    dashboard = Dashboard(context, cube)
+    html = dashboard.render()
 
     # Write the dashboard to the output file
     static_file = open(options['output_file'], "w")
