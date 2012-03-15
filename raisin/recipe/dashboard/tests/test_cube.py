@@ -29,7 +29,7 @@ class CubeTests(unittest.TestCase):
         files = []
         rows_key = None
         cols_key = None
-        cube.add_accession_files(accession_id, files, rows_key, cols_key)
+        cube.add_accession_files(files, accession_id, rows_key, cols_key)
 
 
 def test_suite():
