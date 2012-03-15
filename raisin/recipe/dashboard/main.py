@@ -9,6 +9,9 @@ from raisin.recipe.dashboard.experiments import Experiments
 
 
 def get_cube(context):
+    """
+    Collect the accessions and make an experiments cube with them.
+    """
     accessions = {}
     for line in context['lines']:
         ignore_line = False
