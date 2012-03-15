@@ -38,7 +38,7 @@ class Cube:
             key = (tuple(rows_key), tuple(cols_key))
             self.row_values.add(key[0])
             self.col_values.add(key[1])
-            self.add_accession_files(accession_id, files, rows_key, cols_key)
+            self.add_accession_files(files, accession_id, rows_key, cols_key)
         for dimension in self.dimensions:
             self.values[dimension] = list(self.values[dimension])
             self.values[dimension].sort()
@@ -70,9 +70,6 @@ class Cube:
         Return the row values.
         """
         return self.row_values
-        #row_values = [self.get_dimension_values(dimension)
-        # for dimension in self.rows]
-        #return itertools.product(*row_values)
 
     def get_col_values(self):
         """
@@ -83,7 +80,7 @@ class Cube:
             col_values.append(self.get_dimension_values(dimension))
         return itertools.product(*col_values)
 
-    def add_accession_files(self, accession_id, files, rows_key, cols_key):
+    def add_accession_files(self, files, accession_id, rows_key, cols_key):
         """
         Add an accession file.
         """
