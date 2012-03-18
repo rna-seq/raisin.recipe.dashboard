@@ -74,12 +74,12 @@ class Replicates(Cube):
     Replicates cube
     """
 
-    def __init__(self, accessions, rows, cols):
+    def __init__(self, context):
         """
         Keep the accessions for the replicates
         """
         self.replicates = {}
-        Cube.__init__(self, accessions, rows, cols)
+        Cube.__init__(self, context)
 
     def add_accession_files(self, files, accession_id, rows_key, cols_key):
         """

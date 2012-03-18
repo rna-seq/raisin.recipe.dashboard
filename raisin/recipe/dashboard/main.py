@@ -3,62 +3,14 @@ Prepare the context and the cube and then render the dashboard
 """
 
 import csv
+import sqlite3
 
 from raisin.recipe.dashboard.dashboard import Dashboard
-from raisin.recipe.dashboard.experiments import Experiments
+from raisin.recipe.dashboard.cube import Cube
 
 
-def get_cube(context):
-    """
-    Collect the accessions and make an experiments cube with them.
-    """
-    accessions = {}
-    for line in context['lines']:
-        ignore_line = False
-        for key, value in context['filters'].items():
-            if not key in line:
-                raise AttributeError
-            if not line[key] == value:
-                ignore_line = True
-                continue
-        if ignore_line:
-            continue
-        if (line['project_id'], line['accession_id']) in accessions:
-            accessions[(line['project_id'], line['accession_id'])].append(line)
-        else:
-            accessions[(line['project_id'], line['accession_id'])] = [line]
-        if None in line:
-            raise AttributeError
-    cube = Experiments(accessions, context['rows'], context['cols'])
-    return cube
-
-
-def get_lines(file_name):
-    """
-    Get the lines from the csv file.
-    """
-    lines = csv.DictReader(open(file_name, 'r'),
-                           delimiter='\t',
-                           skipinitialspace=True)
-    return lines
-
-
-def get_filters(options):
-    """
-    Parse the filters given in the options.
-    """
-    filters = {}
-    if 'filters' in options:
-        for filter_line in options['filters'].split('\n'):
-            if ':' in filter_line:
-                key, value = filter_line.split(':')
-                key = key.strip()
-                value = value.strip()
-                if len(key) > 0 and len(value) > 0:
-                    if key in filters:
-                        raise KeyError
-                    filters[key] = value
-    return filters
+def get_key(line):
+    return (line['project_id'], line['accession_id'])
 
 
 def get_dimensions(context):
@@ -98,19 +50,60 @@ def main(options, buildout):
                            ...
                            'view': 'Results'}
     """
+
+    cubes = {}
+
+    # context for experiments
     context = {}
     context['rows'] = options['rows'].split('\n')
     context['cols'] = options['cols'].split('\n')
-    context['filters'] = get_filters(options)
-    context['lines'] = get_lines(options['csv_file'])
+    context['dbconn'] = sqlite3.connect(options['database'])
     context['parameter_vocabulary'] = buildout['parameter_vocabulary']
     context['dimensions'] = get_dimensions(context)
-    context['title'] = options['title']
-    context['description'] = options['description']
     context['parameter_categories'] = buildout['parameter_categories']
+    cubes['experiments'] = Cube(context, 'experiments')
 
-    cube = get_cube(context)
-    dashboard = Dashboard(context, cube)
+    # context for replicates
+    context = context.copy()
+    context['rows'] = context['rows'] + context['cols']
+    context['cols'] = ['number_of_replicates']
+    cubes['replicates'] = Cube(context, 'experiments')
+
+    # context for files
+    context = context.copy()
+    context['cols'] = ['accession_id']
+    cubes['accessions'] = Cube(context, 'accessions')
+
+    
+    """    
+                  ["project_id",
+                   "accession_id",
+                   "species",
+                   "partition",
+                   "cell",
+                   "label",
+                   "readType",
+                   "read_length",
+                   "qualities",
+                   "file_location",
+                   "dataType",
+                   "rnaExtract",
+                   "localization",
+                   "replicate",
+                   "lab",
+                   "view",
+                   "type"]    
+    """
+    
+    #cubes = {'accessions':Cube(context, 'accessions')}    
+    #         'runs': Cube(context, 'runs'),
+    #         'files': Cube(context, 'files')
+    #         }
+
+    title = options['title']
+    description = options['description']
+    
+    dashboard = Dashboard(cubes, title, description)
     html = dashboard.render()
 
     # Write the dashboard to the output file

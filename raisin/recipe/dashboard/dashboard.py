@@ -3,6 +3,162 @@ Render a dashboard as HTML given the context and a cube
 """
 import StringIO
 
+from replicates import Renderer
+
+class Table:
+
+    def __init__(self, cubes):
+        """
+        Store the contect and the cube.
+        """
+        self.cubes = cubes
+        self.dimensions = cubes['experiments'].context['dimensions']
+
+    def render(self):
+        """
+        Render the HTML page parts.
+        """
+        output = StringIO.StringIO()
+        self.top(output)
+        self.rows_header(output)
+        self.columns_header(output)
+        self.rows(output)
+        self.bottom(output)
+        html = output.getvalue()
+        output.close()
+        return html
+
+    def top(self, output):
+        """
+        Render the top of the table.
+        """
+        output.write('''<table><tbody>''')
+        if len(self.cubes['experiments'].cols) > 1:
+            for col in self.cubes['experiments'].cols[:-1]:
+                output.write("""<tr>\n""")
+                self.space_above_rows(output)
+                self.columns_tree(output, col)
+                output.write("</tr>\n")
+
+    def space_above_rows(self, output):
+        """
+        Render the space above the rows of the table.
+        """
+        num = len(self.experiments.get_rows())
+        output.write("""<th class="all_null"><div>&nbsp;</div></th>\n""" * num)
+
+    def columns_tree(self, output, col):
+        """
+        Render the columns tree of the table.
+        """
+        col_index = self.experiments.cols.index(col)
+        for item in self.experiments.get_col_values():
+            template = """<th class="col"><div>%s</div></th>\n"""
+            output.write(template % item[col_index])
+
+    def rows_header(self, output):
+        """
+        Render the rows header of the table.
+        """
+        output.write("""<tr>\n""")
+        for dimension in self.cubes['experiments'].get_rows():
+            template = """<th class="row_header"><div>%s</div></th>\n"""
+            output.write(template % self.dimensions[dimension])
+
+    def columns_header(self, output):
+        """
+        Render the columns header of the table.
+        """
+        for item in self.cubes['experiments'].get_col_values():
+            output.write("""<th class="col"><div>%s</div></th>\n""" % item[-1])
+        output.write("</tr>\n")
+
+    def rows(self, output):
+        """
+        Render the rows of the table.
+        """
+        row_index = 0
+        for row_value in self.cubes['experiments'].get_row_values():
+            output.write("""<tr>\n""")
+            self.row(output, row_value, row_index)
+            row_index += 1
+            output.write("</tr>\n")
+
+    def row(self, output, row_value, row_index):
+        self.row_labels(output, row_value, row_index)
+        self.row_values(output, row_value, row_index)
+    
+    def row_labels(self, output, row_value, row_index):
+        for index in range(0, len(self.cubes['experiments'].get_rows())):
+            output.write("""<th class="row">\n""")
+            output.write("""<div>%s</div>\n""" % row_value[index])
+            output.write("""</th>\n""")
+
+    def row_values(self, output, row_value, row_index):
+        col_index = 0
+        for col_value in self.cubes['experiments'] .get_col_values():
+            self.cell(output, col_value, col_index, row_value, row_index)
+            col_index += 1
+
+    def cell(self, output, col_value, col_index, row_value, row_index):
+        key = row_value + col_value
+        if key in self.cubes['replicates'].get_row_values():
+            div_id = "div%s-%s" % (row_index, col_index)
+            output.write("""<td class="data">\n""")
+            output.write("""<div style="width: 48px; ">\n""")
+            template = ("""<a href="javascript:expandCollapse"""
+                        """('%s');">%s</a>\n""")
+            number_of_replicates = self.cubes['replicates'].get_cell(key)
+            output.write(template % (div_id, number_of_replicates))
+            output.write("""</div>\n""")
+            output.write("""<div id="%s" class="hide">\n""" % div_id)
+            self.produce_table(output, key)
+            output.write("""</div>\n""")
+            output.write("""</td>\n""")
+        else:
+            html = ("""<td class="data"><div style="width: 48px; ">"""
+                    """</div></td>\n""")
+            output.write(html)
+
+    def bottom(self, output):
+        """
+        Render bottom of the table and the html page.
+        """
+        output.write("</tbody></table>")
+
+    def produce_table(self, output, key):
+        """
+        Produce the table
+        """
+        #remove = self.dimensions
+        #for key, value in attribute_categories.items():
+        #    if value == "":
+        #        remove.append(key)
+        #headers = []
+        #for key in replicates[0][1][0].keys():
+        #    if not key in remove:
+        #        headers.append(key)
+
+        headers = self.cubes['accessions'].get_cols()
+        output.write("<table>\n")
+        output.write("<tr>\n")
+        for key in headers:
+            output.write("<th>%s</th>\n" % key)
+        output.write("</tr>\n")
+
+        renderer = Renderer(output)
+
+        #for replicate in self.cubes['files'].get_cell[key]:
+        #    number = 0
+        #    for afile in replicate[1]:
+        #        number += 1
+        #        output.write("<tr>\n")
+        #        for header in headers:
+        #            renderer.render(header, replicate, afile, number)
+        #        output.write("</tr>\n")
+
+        output.write("</table>\n")
+
 
 class Dashboard:
     """
@@ -10,18 +166,18 @@ class Dashboard:
 
     How to render the dashboard:
 
-    dashboard = Dashboard(context, cube)
+    dashboard = Dashboard(cubes)
     html = dashboard.render()
     """
 
-    def __init__(self, context, cube):
+    def __init__(self, cubes, title, description):
         """
         Store the contect and the cube.
         """
-        self.context = context
-        self.cube = cube
-        self.dimensions = context['dimensions']
-        self.attribute_categories = context['parameter_categories']
+        self.cubes = cubes
+        self._title = title
+        self._description = description
+        self.table = Table(cubes)
 
     def render(self):
         """
@@ -31,11 +187,9 @@ class Dashboard:
         self.header(output)
         self.heading(output)
         self.description(output)
-        self.top(output)
-        self.rows_header(output)
-        self.columns_header(output)
-        self.rows(output)
-        self.bottom(output)
+        self.workspace(output)
+        output.write(self.table.render())
+        self.footer(output)
         html = output.getvalue()
         output.close()
         return html
@@ -71,106 +225,25 @@ class Dashboard:
             </script>
         </head>
         <body>
-        """ % self.context['title'])
+        """ % self._title)
 
     def heading(self, output):
         """
         Render the HTML page heading 1.
         """
-        output.write("<h1>%s</h1>\n" % self.context['title'])
+        output.write("<h1>%s</h1>\n" % self._title)
 
     def description(self, output):
         """
         Render the description.
         """
-        output.write("<div>%s</div>\n" % self.context['description'])
+        output.write("<div>%s</div>\n" % self._description)
 
-    def top(self, output):
+    def workspace(self, output):
         """
-        Render the top of the table.
+        Render the description.
         """
-        output.write('''<div class="workspace_results"><table><tbody>''')
-        if len(self.cube.cols) > 1:
-            for col in self.cube.cols[:-1]:
-                output.write("""<tr>\n""")
-                self.space_above_rows(output)
-                self.columns_tree(output, col)
-                output.write("</tr>\n")
+        output.write("""<div class="workspace_results">""")
 
-    def space_above_rows(self, output):
-        """
-        Render the space above the rows of the table.
-        """
-        num = len(self.cube.get_rows())
-        output.write("""<th class="all_null"><div>&nbsp;</div></th>\n""" * num)
-
-    def columns_tree(self, output, col):
-        """
-        Render the columns tree of the table.
-        """
-        col_index = self.cube.cols.index(col)
-        for item in self.cube.get_col_values():
-            template = """<th class="col"><div>%s</div></th>\n"""
-            output.write(template % item[col_index])
-
-    def rows_header(self, output):
-        """
-        Render the rows header of the table.
-        """
-        output.write("""<tr>\n""")
-        for dimension in self.cube.get_rows():
-            template = """<th class="row_header"><div>%s</div></th>\n"""
-            output.write(template % self.dimensions[dimension])
-
-    def columns_header(self, output):
-        """
-        Render the columns header of the table.
-        """
-        for item in self.cube.get_col_values():
-            output.write("""<th class="col"><div>%s</div></th>\n""" % item[-1])
-        output.write("</tr>\n")
-
-    def rows(self, output):
-        """
-        Render the rows of the table.
-        """
-        replicates = self.cube.get_replicates()
-        row = 0
-        for row_value in self.cube.get_row_values():
-            output.write("""<tr>\n""")
-            for index in range(0, len(self.cube.get_rows())):
-                output.write("""<th class="row">\n""")
-                output.write("""<div>%s</div>\n""" % row_value[index])
-                output.write("""</th>\n""")
-            col = 0
-            for col_value in self.cube.get_col_values():
-                key = row_value + col_value
-                if key in replicates.get_row_values():
-                    div_id = "div%s-%s" % (row, col)
-                    output.write("""<td class="data">\n""")
-                    output.write("""<div style="width: 48px; ">\n""")
-                    template = ("""<a href="javascript:expandCollapse"""
-                                """('%s');">%s</a>\n""")
-                    output.write(template % (div_id,
-                              len(replicates.replicates[(key, ('1',))])))
-                    output.write("""</div>\n""")
-                    output.write("""<div id="%s" class="hide">\n""" % div_id)
-                    replicates.produce_table(output,
-                                                  (key, ('1',)),
-                                                  self.attribute_categories)
-                    output.write("""</div>\n""")
-                    output.write("""</td>\n""")
-                else:
-                    html = ("""<td class="data"><div style="width: 48px; ">"""
-                            """</div></td>\n""")
-                    output.write(html)
-                col += 1
-            row += 1
-            output.write("</tr>\n")
-
-    def bottom(self, output):
-        """
-        Render bottom of the table and the html page.
-        """
-        output.write("</tbody></table>")
+    def footer(self, output):
         output.write("</div></body></html>")

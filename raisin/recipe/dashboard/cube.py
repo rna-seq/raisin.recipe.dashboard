@@ -10,42 +10,38 @@ class Cube:
     values.
     """
 
-    def __init__(self, accessions, rows, cols):
+    def __init__(self, context, table_name):
         """
-        Store the accessions and rows and cols and calculate the row values
-        and col values.
+        Precalculate the row_values and col_values.
         """
-        self.rows = rows
-        self.cols = cols
+        self.context = context
+        self.table_name = table_name
+        self.dbconn = context['dbconn']
+        self.rows = context['rows']
+        self.cols = context['cols']
         self.dimensions = self.rows + self.cols
+
+        template = """select distinct %s from %s"""
+ 
+        cursor = self.dbconn.cursor()
+
+        sql = template % (','.join(self.rows), table_name)
+        self.row_values = cursor.execute(sql).fetchall()
+
+        sql = template % (','.join(self.cols), table_name)
+        self.col_values = cursor.execute(sql).fetchall()
+
         self.values = {}
-        self.row_values = set([])
-        self.col_values = set([])
-        self.attributes = {}
         for dimension in self.dimensions:
-            self.values[dimension] = set([])
-        for accession_id, files in accessions.items():
-            rows_key = []
-            for dimension in self.rows:
-                value = files[0][dimension]
-                rows_key.append(value)
-                self.values[dimension].add(value)
-            cols_key = []
-            for dimension in self.cols:
-                value = files[0][dimension]
-                cols_key.append(value)
-                self.values[dimension].add(value)
-            key = (tuple(rows_key), tuple(cols_key))
-            self.row_values.add(key[0])
-            self.col_values.add(key[1])
-            self.add_accession_files(files, accession_id, rows_key, cols_key)
-        for dimension in self.dimensions:
-            self.values[dimension] = list(self.values[dimension])
-            self.values[dimension].sort()
-        self.row_values = list(self.row_values)
-        self.row_values.sort()
-        self.col_values = list(self.col_values)
-        self.col_values.sort()
+            sql = template % (dimension, table_name)
+            rows = cursor.execute(sql).fetchall()
+            self.values[dimension] = [r[0] for r in rows]
+
+        self.mapping = {}
+        template = """select %s from %s"""
+        sql = template % (','.join(self.dimensions), table_name)
+        for line in cursor.execute(sql).fetchall():
+            self.mapping[line[:len(self.rows)]] = line[len(self.rows):]
 
     def get_rows(self):
         """
@@ -80,15 +76,5 @@ class Cube:
             col_values.append(self.get_dimension_values(dimension))
         return itertools.product(*col_values)
 
-    def add_accession_files(self, files, accession_id, rows_key, cols_key):
-        """
-        Add an accession file.
-        """
-        for accession_file in files:
-            for key, value in accession_file.items():
-                if key is None:
-                    raise AttributeError
-                if key in self.attributes:
-                    self.attributes[key].add(value)
-                else:
-                    self.attributes[key] = set([value])
+    def get_cell(self, row):
+        return self.mapping[row][0]
