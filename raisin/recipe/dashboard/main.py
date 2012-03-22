@@ -2,7 +2,6 @@
 Prepare the context and the cube and then render the dashboard
 """
 
-import csv
 import sqlite3
 
 from raisin.recipe.dashboard.dashboard import Dashboard
@@ -10,6 +9,9 @@ from raisin.recipe.dashboard.cube import Cube
 
 
 def get_key(line):
+    """
+    Get a key for the project_id and accession_id from the line
+    """
     return (line['project_id'], line['accession_id'])
 
 
@@ -69,40 +71,24 @@ def main(options, buildout):
     context['cols'] = ['number_of_replicates']
     cubes['replicates'] = Cube(context, 'experiments')
 
-    # context for files
+    # context for accessions
     context = context.copy()
     context['cols'] = ['accession_id']
     cubes['accessions'] = Cube(context, 'accessions')
 
-    
-    """    
-                  ["project_id",
-                   "accession_id",
-                   "species",
-                   "partition",
-                   "cell",
-                   "label",
-                   "readType",
-                   "read_length",
-                   "qualities",
-                   "file_location",
-                   "dataType",
-                   "rnaExtract",
-                   "localization",
-                   "replicate",
-                   "lab",
-                   "view",
-                   "type"]    
-    """
-    
-    #cubes = {'accessions':Cube(context, 'accessions')}    
-    #         'runs': Cube(context, 'runs'),
-    #         'files': Cube(context, 'files')
-    #         }
+    # context for files
+    context = context.copy()
+    context['cols'] = ['accession_id']
+    cubes['files'] = Cube(context, 'files')
+
+    # context for runs
+    context = context.copy()
+    context['cols'] = ['accession_id']
+    cubes['runs'] = Cube(context, 'runs')
 
     title = options['title']
     description = options['description']
-    
+
     dashboard = Dashboard(cubes, title, description)
     html = dashboard.render()
 
