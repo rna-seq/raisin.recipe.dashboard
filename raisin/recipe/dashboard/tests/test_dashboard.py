@@ -6,64 +6,11 @@ import unittest
 from pkg_resources import get_provider
 
 from raisin.recipe.dashboard.main import main
-from raisin.recipe.dashboard.main import get_filters
-from raisin.recipe.dashboard.main import get_lines
 from raisin.recipe.dashboard.main import get_dimensions
 
 PROVIDER = get_provider('raisin.recipe.dashboard')
-DATABASE = PROVIDER.get_resource_filename("", 'tests/workspace/database.csv')
+DATABASE = PROVIDER.get_resource_filename("", 'tests/workspace/database.db')
 INDEX = PROVIDER.get_resource_filename("", 'tests/static/index.html')
-
-
-class GetFiltersTests(unittest.TestCase):
-    """
-    Test the get_filters method in dashboard.py
-    """
-
-    def test_get_filters_1(self):
-        """One filter"""
-        options = {'filters': 'readType:76'}
-        self.failUnless(get_filters(options) == {'readType': '76'})
-
-    def test_get_filters_2(self):
-        """Missing :"""
-        options = {'filters': 'readType76'}
-        self.failUnless(get_filters(options) == {})
-
-    def test_get_filters_3(self):
-        """Nothing around :"""
-        options = {'filters': ':'}
-        self.failUnless(get_filters(options) == {})
-
-    def test_get_filters_4(self):
-        """No value"""
-        options = {'filters': ':myvalue'}
-        self.failUnless(get_filters(options) == {})
-
-    def test_get_filters_5(self):
-        """No key"""
-        options = {'filters': 'mykey:'}
-        self.failUnless(get_filters(options) == {})
-
-    def test_get_filters_6(self):
-        """whitespace"""
-        options = {'filters': ' mykey : myvalue  '}
-        self.failUnless(get_filters(options) == {'mykey': 'myvalue'})
-
-
-class GetLines(unittest.TestCase):
-    """
-    Test the get_lines method in dashboard.py
-    """
-
-    def test_get_lines_1(self):
-        """Just checking the fieldnames"""
-        lines = get_lines(DATABASE)
-        fieldnames = ['project_id', 'accession_id', 'species', 'cell',
-                      'readType', 'read_length', 'qualities', 'file_location',
-                      'dataType', 'rnaExtract', 'localization', 'replicate',
-                      'lab', 'view', 'type']
-        self.failUnless(lines.fieldnames == fieldnames)
 
 
 class GetDimensions(unittest.TestCase):
@@ -108,7 +55,7 @@ class MainTests(unittest.TestCase):
         """
         Test the main method
         """
-        options = {'csv_file': DATABASE,
+        options = {'database': DATABASE,
                    'output_file': INDEX,
                    'rows': 'readType\nread_length',
                    'cols': 'cell',
