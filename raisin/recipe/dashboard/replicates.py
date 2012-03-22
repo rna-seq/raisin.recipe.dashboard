@@ -1,7 +1,14 @@
+"""
+Contains a Renderer and a Replicates cube.
+"""
+
 from raisin.recipe.dashboard.cube import Cube
 
 
 class Renderer:
+    """
+    Render some specific items in HTML
+    """
 
     def __init__(self, output):
         """
@@ -74,23 +81,12 @@ class Replicates(Cube):
     Replicates cube
     """
 
-    def __init__(self, context):
+    def __init__(self, context, table_name):
         """
         Keep the accessions for the replicates
         """
         self.replicates = {}
-        Cube.__init__(self, context)
-
-    def add_accession_files(self, files, accession_id, rows_key, cols_key):
-        """
-        Add accession files
-        """
-        Cube.add_accession_files(self, files, accession_id, rows_key, cols_key)
-        key = (tuple(rows_key), tuple(cols_key))
-        if key in self.replicates:
-            self.replicates[key].append((accession_id, files))
-        else:
-            self.replicates[key] = [(accession_id, files)]
+        Cube.__init__(self, context, table_name)
 
     def produce_table(self, output, key, attribute_categories):
         """
