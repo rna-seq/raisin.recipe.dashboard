@@ -1,4 +1,5 @@
 * text=auto !eol
+/CHANGES.txt -text
 raisin/recipe/dashboard/dashboard.py_old -text
 raisin/recipe/dashboard/database.py_obsolete -text
 raisin/recipe/dashboard/replicates.py -text

@@ -1,0 +1,7 @@
+Next release
+============
+
+Dependencies
+------------
+
+- Add readline dependency
