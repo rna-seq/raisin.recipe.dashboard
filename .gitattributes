@@ -3,3 +3,4 @@ raisin/recipe/dashboard/dashboard.py_old -text
 raisin/recipe/dashboard/database.py_obsolete -text
 raisin/recipe/dashboard/replicates.py -text
 raisin/recipe/dashboard/tests/workspace/database.csv -text
+raisin/recipe/dashboard/tests/workspace/database.db -text
