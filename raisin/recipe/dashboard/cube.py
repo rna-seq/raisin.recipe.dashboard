@@ -16,24 +16,21 @@ class Cube:
         """
         self.context = context
         self.table_name = table_name
-        self.dbconn = context['dbconn']
-        self.rows = context['rows']
-        self.cols = context['cols']
-        self.dimensions = self.rows + self.cols
+        self.dimensions = self.context['rows'] + self.context['cols']
 
-        if len(self.rows) == 0:
+        if len(self.context['rows']) == 0:
             raise AttributeError
-        if len(self.cols) == 0:
+        if len(self.context['cols']) == 0:
             raise AttributeError
 
         template = """select distinct %s from %s"""
- 
-        cursor = self.dbconn.cursor()
 
-        sql = template % (','.join(self.rows), table_name)
+        cursor = self.context['dbconn'].cursor()
+
+        sql = template % (','.join(self.context['rows']), table_name)
         self.row_values = cursor.execute(sql).fetchall()
 
-        sql = template % (','.join(self.cols), table_name)
+        sql = template % (','.join(self.context['cols']), table_name)
         self.col_values = cursor.execute(sql).fetchall()
 
         self.values = {}
@@ -46,19 +43,21 @@ class Cube:
         template = """select %s from %s"""
         sql = template % (','.join(self.dimensions), table_name)
         for line in cursor.execute(sql).fetchall():
-            self.mapping[line[:len(self.rows)]] = line[len(self.rows):]
+            key = line[:len(self.context['rows'])]
+            value = line[len(self.context['rows']):]
+            self.mapping[key] = value
 
     def get_rows(self):
         """
         Return the rows of the cube.
         """
-        return self.rows
+        return self.context['rows']
 
     def get_cols(self):
         """
         Return the cols of the cube.
         """
-        return self.cols
+        return self.context['cols']
 
     def get_dimension_values(self, dimension):
         """
@@ -77,9 +76,12 @@ class Cube:
         Return the col values.
         """
         col_values = []
-        for dimension in self.cols:
+        for dimension in self.context['cols']:
             col_values.append(self.get_dimension_values(dimension))
         return itertools.product(*col_values)
 
     def get_cell(self, row):
+        """
+        Return one cell
+        """
         return self.mapping[row][0]
