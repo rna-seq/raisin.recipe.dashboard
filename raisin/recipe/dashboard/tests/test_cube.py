@@ -3,8 +3,13 @@ Test for cube.py
 """
 
 import unittest
+import sqlite3
+from pkg_resources import get_provider
 
 from raisin.recipe.dashboard.cube import Cube
+
+PROVIDER = get_provider('raisin.recipe.dashboard')
+DATABASE = PROVIDER.get_resource_filename("", 'tests/workspace/database.db')
 
 
 class CubeTests(unittest.TestCase):
@@ -16,20 +21,16 @@ class CubeTests(unittest.TestCase):
         """
         Fill the cube with some empty values and call all methods once.
         """
-        accessions = {}
-        rows = []
-        cols = []
-        cube = Cube(accessions, rows, cols)
-        self.failUnless(cube.get_rows() == [])
-        self.failUnless(cube.get_cols() == [])
+        accessions = {'rows': ['cell'],
+                      'cols': ['rnaExtract'],
+                      'dbconn': sqlite3.connect(DATABASE)
+                      }
+        cube = Cube(accessions, "experiments")
+        self.failUnless(cube.get_rows() == ['cell'])
+        self.failUnless(cube.get_cols() == ['rnaExtract'])
         self.failUnlessRaises(KeyError, cube.get_dimension_values, None)
-        self.failUnless(cube.get_row_values() == [])
-        self.failUnless(list(cube.get_col_values()) == [()])
-        accession_id = None
-        files = []
-        rows_key = None
-        cols_key = None
-        cube.add_accession_files(files, accession_id, rows_key, cols_key)
+        self.failUnless(cube.get_row_values() == [(u'NHEK',)])
+        self.failUnless(list(cube.get_col_values()) == [(u'LONGPOLYA',)])
 
 
 def test_suite():
