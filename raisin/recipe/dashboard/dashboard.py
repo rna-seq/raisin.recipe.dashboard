@@ -37,8 +37,8 @@ class Table:
         Render the top of the table.
         """
         output.write('''<table><tbody>''')
-        if len(self.cubes['experiments'].cols) > 1:
-            for col in self.cubes['experiments'].cols[:-1]:
+        if len(self.cubes['experiments'].get_cols()) > 1:
+            for col in self.cubes['experiments'].get_cols()[:-1]:
                 output.write("""<tr>\n""")
                 self.space_above_rows(output)
                 self.columns_tree(output, col)
@@ -112,8 +112,8 @@ class Table:
                 'row_index': row_index}
         col_index = 0
         for col_value in self.cubes['experiments'] .get_col_values():
-            data[col_index] = col_index
-            data[col_value] = col_value
+            data['col_index'] = col_index
+            data['col_value'] = col_value
             self.cell(output, data)
             col_index += 1
 
@@ -128,7 +128,10 @@ class Table:
             output.write("""<div style="width: 48px; ">\n""")
             template = ("""<a href="javascript:expandCollapse"""
                         """('%s');">%s</a>\n""")
-            number_of_replicates = self.cubes['replicates'].get_cell(key)
+            cols = self.cubes['replicates'].context['cols']
+            index = cols.index('number_of_replicates')
+            cell = self.cubes['replicates'].get_cell(key)
+            number_of_replicates = cell[0][index]
             output.write(template % (div_id, number_of_replicates))
             output.write("""</div>\n""")
             output.write("""<div id="%s" class="hide">\n""" % div_id)
@@ -162,21 +165,19 @@ class Table:
         headers = self.cubes['accessions'].get_cols()
         output.write("<table>\n")
         output.write("<tr>\n")
-        for key in headers:
-            output.write("<th>%s</th>\n" % key)
+        for header in headers:
+            output.write("<th>%s</th>\n" % header)
         output.write("</tr>\n")
-
         renderer = Renderer(output)
-
-        for replicate in self.cubes['files'].get_cell[key]:
-            number = 0
-            for afile in replicate[1]:
-                number += 1
-                output.write("<tr>\n")
-                for header in headers:
-                    renderer.render(header, replicate, afile, number)
-                output.write("</tr>\n")
-
+        #print self.cubes['files'].get_cell(key)
+        number = 0
+        for replicate in self.cubes['files'].get_cell(key):
+            number += 1
+            output.write("<tr>\n")
+            line = dict(zip(headers, replicate))
+            for header in headers:
+                renderer.render(header, replicate, line, number)
+            output.write("</tr>\n")
         output.write("</table>\n")
 
 

@@ -45,7 +45,10 @@ class Cube:
         for line in cursor.execute(sql).fetchall():
             key = line[:len(self.context['rows'])]
             value = line[len(self.context['rows']):]
-            self.mapping[key] = value
+            if key in self.mapping:
+                self.mapping[key].append(value)
+            else:
+                self.mapping[key] = [value]
 
     def get_rows(self):
         """
@@ -84,4 +87,4 @@ class Cube:
         """
         Return one cell
         """
-        return self.mapping[row][0]
+        return self.mapping[row]

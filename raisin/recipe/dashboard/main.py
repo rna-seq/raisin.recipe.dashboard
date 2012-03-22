@@ -68,22 +68,75 @@ def main(options, buildout):
     # context for replicates
     context = context.copy()
     context['rows'] = context['rows'] + context['cols']
-    context['cols'] = ['number_of_replicates']
+    context['cols'] = ['project_id',
+                       'parameter_list',
+                       'parameter_values',
+                       'lab',
+                       'species',
+                       'cell',
+                       'localization',
+                       'rnaExtract',
+                       'partition',
+                       'annotation_version',
+                       'readType',
+                       'read_length',
+                       'paired',
+                       'number_of_replicates']
     cubes['replicates'] = Cube(context, 'experiments')
 
     # context for accessions
     context = context.copy()
-    context['cols'] = ['accession_id']
+    context['cols'] = ['project_id',
+                       'accession_id',
+                       'species',
+                       'partition',
+                       'cell',
+                       'readType',
+                       'read_length',
+                       'qualities',
+                       'gender',
+                       'dataType',
+                       'rnaExtract',
+                       'localization',
+                       'replicate',
+                       'lab']
     cubes['accessions'] = Cube(context, 'accessions')
 
     # context for files
     context = context.copy()
-    context['cols'] = ['accession_id']
+    context['cols'] = ['project_id', 
+                       'accession_id',
+                       'species',
+                       'partition',
+                       'cell',
+                       'label',
+                       'readType',
+                       'read_length',
+                       'qualities',
+                       'file_location',
+                       'dataType',
+                       'rnaExtract',
+                       'localization',
+                       'replicate',
+                       'lab',
+                       'view',
+                       'type']
     cubes['files'] = Cube(context, 'files')
 
     # context for runs
     context = context.copy()
-    context['cols'] = ['accession_id']
+    context['cols'] = ['run_id',
+                       'project_id',
+                       'run_id',
+                       'species',
+                       'cell',
+                       'lab',
+                       'localization',
+                       'rnaExtract',
+                       'partition',
+                       'readType',
+                       'read_length',
+                       'paired']
     cubes['runs'] = Cube(context, 'runs')
 
     title = options['title']
