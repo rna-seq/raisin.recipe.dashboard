@@ -21,6 +21,11 @@ class Cube:
         self.cols = context['cols']
         self.dimensions = self.rows + self.cols
 
+        if len(self.rows) == 0:
+            raise AttributeError
+        if len(self.cols) == 0:
+            raise AttributeError
+
         template = """select distinct %s from %s"""
  
         cursor = self.dbconn.cursor()
