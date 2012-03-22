@@ -3,9 +3,13 @@ Render a dashboard as HTML given the context and a cube
 """
 import StringIO
 
-from replicates import Renderer
+from raisin.recipe.dashboard.replicates import Renderer
+
 
 class Table:
+    """
+    Renders the dashboard table.
+    """
 
     def __init__(self, cubes):
         """
@@ -44,15 +48,15 @@ class Table:
         """
         Render the space above the rows of the table.
         """
-        num = len(self.experiments.get_rows())
+        num = len(self.cubes['experiments'].get_rows())
         output.write("""<th class="all_null"><div>&nbsp;</div></th>\n""" * num)
 
     def columns_tree(self, output, col):
         """
         Render the columns tree of the table.
         """
-        col_index = self.experiments.cols.index(col)
-        for item in self.experiments.get_col_values():
+        col_index = self.cubes['experiments'].cols.index(col)
+        for item in self.cubes['experiments'].get_col_values():
             template = """<th class="col"><div>%s</div></th>\n"""
             output.write(template % item[col_index])
 
@@ -85,25 +89,41 @@ class Table:
             output.write("</tr>\n")
 
     def row(self, output, row_value, row_index):
-        self.row_labels(output, row_value, row_index)
+        """
+        Render the row labels and values
+        """
+        self.row_labels(output, row_value)
         self.row_values(output, row_value, row_index)
-    
-    def row_labels(self, output, row_value, row_index):
+
+    def row_labels(self, output, row_value):
+        """
+        Render the row labels
+        """
         for index in range(0, len(self.cubes['experiments'].get_rows())):
             output.write("""<th class="row">\n""")
             output.write("""<div>%s</div>\n""" % row_value[index])
             output.write("""</th>\n""")
 
     def row_values(self, output, row_value, row_index):
+        """
+        Render the row values
+        """
+        data = {'row_value': row_value,
+                'row_index': row_index}
         col_index = 0
         for col_value in self.cubes['experiments'] .get_col_values():
-            self.cell(output, col_value, col_index, row_value, row_index)
+            data[col_index] = col_index
+            data[col_value] = col_value
+            self.cell(output, data)
             col_index += 1
 
-    def cell(self, output, col_value, col_index, row_value, row_index):
-        key = row_value + col_value
+    def cell(self, output, data):
+        """
+        Render the cell
+        """
+        key = data['row_value'] + data['col_value']
         if key in self.cubes['replicates'].get_row_values():
-            div_id = "div%s-%s" % (row_index, col_index)
+            div_id = "div%s-%s" % (data['row_index'], data['col_index'])
             output.write("""<td class="data">\n""")
             output.write("""<div style="width: 48px; ">\n""")
             template = ("""<a href="javascript:expandCollapse"""
@@ -148,14 +168,14 @@ class Table:
 
         renderer = Renderer(output)
 
-        #for replicate in self.cubes['files'].get_cell[key]:
-        #    number = 0
-        #    for afile in replicate[1]:
-        #        number += 1
-        #        output.write("<tr>\n")
-        #        for header in headers:
-        #            renderer.render(header, replicate, afile, number)
-        #        output.write("</tr>\n")
+        for replicate in self.cubes['files'].get_cell[key]:
+            number = 0
+            for afile in replicate[1]:
+                number += 1
+                output.write("<tr>\n")
+                for header in headers:
+                    renderer.render(header, replicate, afile, number)
+                output.write("</tr>\n")
 
         output.write("</table>\n")
 
@@ -246,4 +266,7 @@ class Dashboard:
         output.write("""<div class="workspace_results">""")
 
     def footer(self, output):
+        """
+        Render the footer
+        """
         output.write("</div></body></html>")
