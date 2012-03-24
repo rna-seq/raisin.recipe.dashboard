@@ -28,7 +28,7 @@ class CubeTests(unittest.TestCase):
         cube = Cube(accessions, "experiments")
         self.failUnless(cube.get_rows() == ['cell'])
         self.failUnless(cube.get_cols() == ['rnaExtract'])
-        self.failUnlessRaises(KeyError, cube.get_dimension_values, None)
+        self.failUnlessRaises(KeyError, cube.get_dim_values, None)
         self.failUnless(cube.get_row_values() == [(u'NHEK',)])
         self.failUnless(list(cube.get_col_values()) == [(u'LONGPOLYA',)])
 
