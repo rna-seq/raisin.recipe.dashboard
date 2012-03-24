@@ -79,7 +79,7 @@ class Cube:
         """
         return self.row_values
 
-    def get_col_values(self):
+    def get_col_product(self):
         """
         Return the distinct col values.
         """

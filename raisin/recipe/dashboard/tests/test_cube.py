@@ -30,7 +30,7 @@ class CubeTests(unittest.TestCase):
         self.failUnless(cube.get_cols() == ['rnaExtract'])
         self.failUnlessRaises(KeyError, cube.get_dim_values, None)
         self.failUnless(cube.get_row_values() == [(u'NHEK',)])
-        self.failUnless(list(cube.get_col_values()) == [(u'LONGPOLYA',)])
+        self.failUnless(list(cube.get_col_product()) == [(u'LONGPOLYA',)])
 
 
 def test_suite():

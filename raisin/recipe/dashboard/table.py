@@ -55,8 +55,8 @@ class Table:
         """
         Render the columns tree of the table.
         """
-        col_index = self.cubes['experiments'].cols.index(col)
-        for item in self.cubes['experiments'].get_col_values():
+        col_index = self.cubes['experiments'].get_cols().index(col)
+        for item in self.cubes['experiments'].get_col_product():
             template = """<th class="col"><div>%s</div></th>\n"""
             output.write(template % item[col_index])
 
@@ -73,7 +73,7 @@ class Table:
         """
         Render the columns header of the table.
         """
-        for item in self.cubes['experiments'].get_col_values():
+        for item in self.cubes['experiments'].get_col_product():
             output.write("""<th class="col"><div>%s</div></th>\n""" % item[-1])
         output.write("</tr>\n")
 
@@ -111,7 +111,7 @@ class Table:
         data = {'row_value': row_value,
                 'row_index': row_index}
         col_index = 0
-        for col_value in self.cubes['experiments'] .get_col_values():
+        for col_value in self.cubes['experiments'].get_col_product():
             data['col_index'] = col_index
             data['col_value'] = col_value
             self.cell(output, data)
