@@ -162,7 +162,7 @@ class Table:
         #    if not key in remove:
         #        headers.append(key)
 
-        headers = self.cubes['accessions'].get_cols()
+        headers = self.cubes['files'].get_cols()
         output.write("<table>\n")
         output.write("<tr>\n")
         for header in headers:
@@ -181,6 +181,19 @@ class Table:
         output.write("</table>\n")
 
 
+class AccessionTable(Table):
+
+    def __init__(self, cubes):
+        """
+        Store the context and the cube.
+        """
+        Table.__init__(self, cubes)
+
+    def produce_table(self, output, key):
+        self.table = Table(self.cubes)
+        rendered = self.table.render()
+        output.write(rendered)
+
 class Dashboard:
     """
     Renders a dashboard using a context and a cube.
@@ -198,7 +211,7 @@ class Dashboard:
         self.cubes = cubes
         self._title = title
         self._description = description
-        self.table = Table(cubes)
+        self.table = AccessionTable(cubes)
 
     def render(self):
         """
