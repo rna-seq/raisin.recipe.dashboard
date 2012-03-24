@@ -81,7 +81,7 @@ class Cube:
 
     def get_col_product(self):
         """
-        Return the distinct col values.
+        Return the product of the col values.
         """
         col_values = []
         for dimension in self.context['cols']:
@@ -90,6 +90,6 @@ class Cube:
 
     def get_cell(self, row):
         """
-        Return one cell
+        Return the value for all col dimensions in the row
         """
         return self.mapping[row]
