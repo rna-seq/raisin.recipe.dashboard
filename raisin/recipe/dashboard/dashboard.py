@@ -13,7 +13,7 @@ class Dashboard:
 
     How to render the dashboard:
 
-    dashboard = Dashboard(cubes)
+    dashboard = Dashboard(cubes, title, description)
     html = dashboard.render()
     """
 
