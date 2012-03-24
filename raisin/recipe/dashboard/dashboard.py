@@ -4,7 +4,7 @@ Render a dashboard as HTML given the context and a cube
 import StringIO
 
 from raisin.recipe.dashboard.replicates import Renderer
-from raisin.recipe.dashboard.table import AccessionsTable
+from raisin.recipe.dashboard.table import AccessionTable
 
 
 class Dashboard:
