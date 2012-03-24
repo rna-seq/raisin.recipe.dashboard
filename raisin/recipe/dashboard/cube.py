@@ -12,11 +12,10 @@ class Cube:
 
     def __init__(self, context, table_name):
         """
-        Precalculate the row_values and col_values.
+        Precalculate the row_values, col_values and dim_values.
         """
         self.context = context
         self.table_name = table_name
-        self.dimensions = self.context['rows'] + self.context['cols']
 
         if len(self.context['rows']) == 0:
             raise AttributeError
@@ -33,15 +32,15 @@ class Cube:
         sql = template % (','.join(self.context['cols']), table_name)
         self.col_values = cursor.execute(sql).fetchall()
 
-        self.values = {}
-        for dimension in self.dimensions:
+        self.dim_values = {}
+        for dimension in self.get_dimensions():
             sql = template % (dimension, table_name)
             rows = cursor.execute(sql).fetchall()
-            self.values[dimension] = [r[0] for r in rows]
+            self.dim_values[dimension] = [r[0] for r in rows]
 
         self.mapping = {}
         template = """select %s from %s"""
-        sql = template % (','.join(self.dimensions), table_name)
+        sql = template % (','.join(self.get_dimensions()), table_name)
         for line in cursor.execute(sql).fetchall():
             key = line[:len(self.context['rows'])]
             value = line[len(self.context['rows']):]
@@ -62,25 +61,31 @@ class Cube:
         """
         return self.context['cols']
 
-    def get_dimension_values(self, dimension):
+    def get_dimensions(self):
         """
-        Return the values for the dimension
+        Return the dimensions of the cube.
         """
-        return self.values[dimension]
+        return self.context['rows'] + self.context['cols']
+
+    def get_dim_values(self, dimension):
+        """
+        Return the distinct values for the dimension
+        """
+        return self.dim_values[dimension]
 
     def get_row_values(self):
         """
-        Return the row values.
+        Return the distinct row values.
         """
         return self.row_values
 
     def get_col_values(self):
         """
-        Return the col values.
+        Return the distinct col values.
         """
         col_values = []
         for dimension in self.context['cols']:
-            col_values.append(self.get_dimension_values(dimension))
+            col_values.append(self.get_dim_values(dimension))
         return itertools.product(*col_values)
 
     def get_cell(self, row):
