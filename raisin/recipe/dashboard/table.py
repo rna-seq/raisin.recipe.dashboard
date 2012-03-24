@@ -169,7 +169,6 @@ class Table:
             output.write("<th>%s</th>\n" % header)
         output.write("</tr>\n")
         renderer = Renderer(output)
-        #print self.cubes['files'].get_cell(key)
         number = 0
         for replicate in self.cubes['files'].get_cell(key):
             number += 1
@@ -179,18 +178,3 @@ class Table:
                 renderer.render(header, replicate, line, number)
             output.write("</tr>\n")
         output.write("</table>\n")
-
-
-class AccessionTable(Table):
-
-    def __init__(self, cubes):
-        """
-        Store the context and the cube.
-        """
-        Table.__init__(self, cubes)
-
-    def produce_table(self, output, key):
-        self.table = Table(self.cubes)
-        rendered = self.table.render()
-        output.write(rendered)
-
