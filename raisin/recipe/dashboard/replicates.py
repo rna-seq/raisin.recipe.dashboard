@@ -94,7 +94,7 @@ class Replicates(Cube):
         """
         replicates = self.replicates[key]
 
-        remove = self.dimensions
+        remove = self.get_dimensions()
         for key, value in attribute_categories.items():
             if value == "":
                 remove.append(key)
