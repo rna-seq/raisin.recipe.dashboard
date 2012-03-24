@@ -104,7 +104,7 @@ def main(options, buildout):
 
     # context for files
     context = context.copy()
-    context['cols'] = ['project_id', 
+    context['cols'] = ['project_id',
                        'accession_id',
                        'species',
                        'partition',
