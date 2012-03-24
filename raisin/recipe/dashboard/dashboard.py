@@ -2,9 +2,7 @@
 Render a dashboard as HTML given the context and a cube
 """
 import StringIO
-
-from raisin.recipe.dashboard.replicates import Renderer
-from raisin.recipe.dashboard.table import AccessionTable
+from raisin.recipe.dashboard.table import Table
 
 
 class Dashboard:
@@ -24,7 +22,6 @@ class Dashboard:
         self.cubes = cubes
         self._title = title
         self._description = description
-        self.table = AccessionTable(cubes)
 
     def render(self):
         """
@@ -35,7 +32,7 @@ class Dashboard:
         self.heading(output)
         self.description(output)
         self.workspace(output)
-        output.write(self.table.render())
+        output.write(Table(self.cubes).render())
         self.footer(output)
         html = output.getvalue()
         output.close()
