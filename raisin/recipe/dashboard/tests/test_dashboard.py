@@ -55,10 +55,12 @@ class MainTests(unittest.TestCase):
         """
         Test the main method
         """
-        options = {'database': DATABASE,
+        options = {'files': '',
+                   'database': DATABASE,
                    'output_file': INDEX,
                    'rows': 'readType\nread_length',
                    'cols': 'cell',
+                   'subset_parameters': 'cell',
                    'title': 'read dashboard',
                    'description': 'Read type vs read length dashboard'}
         buildout = {'parameter_vocabulary': {'readType': 'Read Type',

@@ -1,8 +1,6 @@
 """
-Contains a Renderer and a Replicates cube.
+Contains an HTML Renderer for some dimensions.
 """
-
-from raisin.recipe.dashboard.cube import Cube
 
 
 class Renderer:
@@ -74,4 +72,3 @@ class Renderer:
         Render the header
         """
         return "<td>%s</td>\n" % afile[header]
-

@@ -3,7 +3,7 @@ Render a dashboard as HTML given the context and a cube
 """
 import StringIO
 
-from raisin.recipe.dashboard.replicates import Renderer
+from raisin.recipe.dashboard.renderer import Renderer
 
 
 class Table:
@@ -149,23 +149,35 @@ class Table:
         """
         output.write("</tbody></table>")
 
+    def get_rnaseq_homepage_link(self, key, all_headers):
+        replicate = self.cubes['files'].get_cell(key)[0]
+        line = dict(zip(all_headers, replicate))
+        parameters = []
+        subset_parameters = self.cubes['files'].context['subset_parameters']
+        for dim in subset_parameters:
+            parameters.append(line[dim])
+        base = "http://rnaseq.crg.es/project/%s/" % line['project_id']
+        values = '-'.join(parameters)
+        link = base + "experiment/subset/cell-partition/%s/" % values
+        text = ', '.join(parameters)
+        tag = """<a href="%s">%s</a>""" % (link, text)
+        return tag
+
     def produce_table(self, output, key):
         """
         Produce the table
         """
-        #remove = self.dimensions
-        #for key, value in attribute_categories.items():
-        #    if value == "":
-        #        remove.append(key)
-        #headers = []
-        #for key in replicates[0][1][0].keys():
-        #    if not key in remove:
-        #        headers.append(key)
-
-        headers = self.cubes['files'].get_cols()
+        all_headers = []
+        new_headers = []
+        for header in self.cubes['files'].get_cols():
+            if not header in self.dimensions:
+                new_headers.append(header)
+            all_headers.append(header)
+        link = self.get_rnaseq_homepage_link(key, all_headers)
+        output.write("""<div class="lalign">%s</div>\n""" % link)
         output.write("<table>\n")
         output.write("<tr>\n")
-        for header in headers:
+        for header in new_headers:
             output.write("<th>%s</th>\n" % header)
         output.write("</tr>\n")
         renderer = Renderer(output)
@@ -173,8 +185,8 @@ class Table:
         for replicate in self.cubes['files'].get_cell(key):
             number += 1
             output.write("<tr>\n")
-            line = dict(zip(headers, replicate))
-            for header in headers:
+            line = dict(zip(all_headers, replicate))
+            for header in new_headers:
                 renderer.render(header, replicate, line, number)
             output.write("</tr>\n")
         output.write("</table>\n")
