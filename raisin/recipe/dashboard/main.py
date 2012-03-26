@@ -57,7 +57,6 @@ def main(options, buildout):
 
     # context for experiments
     context = {}
-    context['files'] = options['files']
     context['rows'] = options['rows'].split('\n')
     context['cols'] = options['cols'].split('\n')
     context['subset_parameters'] = options['subset_parameters'].split('\n')
