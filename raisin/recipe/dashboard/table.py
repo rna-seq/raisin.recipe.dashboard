@@ -3,8 +3,6 @@ Render a dashboard as HTML given the context and a cube
 """
 import StringIO
 
-from raisin.recipe.dashboard.renderer import Renderer
-
 
 class Table:
     """
@@ -123,19 +121,13 @@ class Table:
         """
         key = data['row_value'] + data['col_value']
         if key in self.cubes['replicates'].get_row_values():
-            div_id = "div%s-%s" % (data['row_index'], data['col_index'])
             output.write("""<td class="data">\n""")
             output.write("""<div style="width: 48px; ">\n""")
-            template = ("""<a href="javascript:expandCollapse"""
-                        """('%s');">%s</a>\n""")
             cols = self.cubes['replicates'].context['cols']
             index = cols.index('number_of_replicates')
             cell = self.cubes['replicates'].get_cell(key)
             number_of_replicates = cell[0][index]
-            output.write(template % (div_id, number_of_replicates))
-            output.write("""</div>\n""")
-            output.write("""<div id="%s" class="hide">\n""" % div_id)
-            self.produce_table(output, key)
+            self.rnaseq_homepage_link(output, key, number_of_replicates)
             output.write("""</div>\n""")
             output.write("""</td>\n""")
         else:
@@ -149,23 +141,9 @@ class Table:
         """
         output.write("</tbody></table>")
 
-    def get_rnaseq_homepage_link(self, key, all_headers):
-        replicate = self.cubes['files'].get_cell(key)[0]
-        line = dict(zip(all_headers, replicate))
-        parameters = []
-        subset_parameters = self.cubes['files'].context['subset_parameters']
-        for dim in subset_parameters:
-            parameters.append(line[dim])
-        base = "http://rnaseq.crg.es/project/%s/" % line['project_id']
-        values = '-'.join(parameters)
-        link = base + "experiment/subset/cell-partition/%s/" % values
-        text = ', '.join(parameters)
-        tag = """<a href="%s">%s</a>""" % (link, text)
-        return tag
-
-    def produce_table(self, output, key):
+    def rnaseq_homepage_link(self, output, key, text):
         """
-        Produce the table
+        Produce the homepage link
         """
         all_headers = []
         new_headers = []
@@ -173,20 +151,23 @@ class Table:
             if not header in self.dimensions:
                 new_headers.append(header)
             all_headers.append(header)
-        link = self.get_rnaseq_homepage_link(key, all_headers)
-        output.write("""<div class="lalign">%s</div>\n""" % link)
-        output.write("<table>\n")
-        output.write("<tr>\n")
-        for header in new_headers:
-            output.write("<th>%s</th>\n" % header)
-        output.write("</tr>\n")
-        renderer = Renderer(output)
-        number = 0
-        for replicate in self.cubes['files'].get_cell(key):
-            number += 1
-            output.write("<tr>\n")
-            line = dict(zip(all_headers, replicate))
-            for header in new_headers:
-                renderer.render(header, replicate, line, number)
-            output.write("</tr>\n")
-        output.write("</table>\n")
+        link = self.get_link(key, all_headers, text)
+        output.write(link)
+        return
+
+    def get_link(self, key, all_headers, text):
+        """
+        Make a link to the homepage using the parameter information
+        """
+        replicate = self.cubes['files'].get_cell(key)[0]
+        line = dict(zip(all_headers, replicate))
+        parameters = []
+        subset_parameters = self.cubes['files'].context['subset_parameters']
+        for dim in subset_parameters:
+            parameters.append(line[dim])
+        base = "http://rnaseq.crg.es/project/%s/" % line['project_id']
+        params = '-'.join(subset_parameters)
+        values = '-'.join(parameters)
+        link = base + "%s/%s/tab/overview/" % (params, values)
+        tag = """<a href="%s">%s</a>""" % (link, text)
+        return tag
