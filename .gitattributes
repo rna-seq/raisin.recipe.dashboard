@@ -4,5 +4,6 @@ raisin/recipe/dashboard/dashboard.py_old -text
 raisin/recipe/dashboard/database.py_obsolete -text
 raisin/recipe/dashboard/renderer.py -text
 raisin/recipe/dashboard/table.py -text
+raisin/recipe/dashboard/tests/static/template.html -text
 raisin/recipe/dashboard/tests/workspace/database.csv -text
 raisin/recipe/dashboard/tests/workspace/database.db -text
