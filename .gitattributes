@@ -7,3 +7,4 @@ raisin/recipe/dashboard/table.py -text
 raisin/recipe/dashboard/tests/static/template.html -text
 raisin/recipe/dashboard/tests/workspace/database.csv -text
 raisin/recipe/dashboard/tests/workspace/database.db -text
+/version.txt -text
