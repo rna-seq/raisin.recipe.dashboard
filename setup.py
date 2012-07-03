@@ -38,8 +38,6 @@ setup(name='raisin.recipe.dashboard',
       zip_safe=False,
       test_suite='raisin.recipe.dashboard.tests',
       install_requires=['setuptools',
-                        'zc.buildout',
-                        'readline',
                         # -*- Extra requirements: -*-
                         ],
       entry_points=entry_points,
