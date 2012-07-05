@@ -4,7 +4,7 @@ raisin.recipe.dashboard
 """
 from setuptools import setup, find_packages
 
-version = '1.1'
+version = '1.1.1'
 
 long_description = """The raisin.recipe.dashboard package is a Buildout recipe used for
 creating the dashboard for Raisin, the web application used for publishing the summary
