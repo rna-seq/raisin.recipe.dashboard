@@ -1,19 +1,6 @@
-1.1.1 (2012-07-05)
-================
+1.1.1 (2012-07-03)
+==================
 
-Documentation
--------------
-
-- Add Readme.txt
-
-- Add meta data to setup.py
-
-Dependencies
-------------
+- Update the project meta data in setup.py
 
 - Remove readline dependency
-
-1.1 (2012-03-28)
-================
-
-- First release
