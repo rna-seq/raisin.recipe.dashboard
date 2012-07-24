@@ -168,6 +168,6 @@ class Table:
         base = "http://rnaseq.crg.es/project/%s/" % line['project_id']
         params = '-'.join(subset_parameters)
         values = '-'.join(parameters)
-        link = base + "%s/%s/tab/overview/" % (params, values)
+        link = base + "%s/%s" % (params, values)
         tag = """<a href="%s">%s</a>""" % (link, text)
         return tag
