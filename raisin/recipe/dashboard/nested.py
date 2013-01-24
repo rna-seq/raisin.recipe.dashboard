@@ -1,9 +1,8 @@
+import pandas as pd
 import csv
 import itertools
-from raisin.recipe.dashboard import Dashboard
 
 MEASURE = None
-
 
 class Coordinates:
 
@@ -111,11 +110,14 @@ class Cube:
         self.sub_cube.attributes = self.attributes + self.sub_cube.attributes
         return self.sub_cube
 
-    def bagify(self, attributes=[]):
+    def bagify(self, attributes=None):
         """
         Collapse data on lowest level into bags.
         """
-        attributes = attributes + self.attributes
+        if not attributes is None:
+            attributes = attributes + self.attributes
+        else:
+            attributes = self.attributes
         coordinates = self.coordinates.get()
         # XXX 
         # Would have to remove attributes not needed
@@ -125,17 +127,18 @@ class Cube:
             self.sub_cube.bagify(attributes)
         return self
 
-    def aggregate(self, function, attributes=[]):
+    def aggregate(self, function, attributes=None):
         """
         Aggregate over the cube bags using the function
         """
-        attributes = attributes + self.attributes
+        if not attributes is None:
+            attributes = attributes + self.attributes
+        else:
+            attributes = self.attributes
+
         coordinates = self.coordinates.get()
         self.agg = coordinates.groupby(attributes).agg(function)
         if not self.sub_cube is None:
-            self.sub_cube.bagify(attributes)
+            self.sub_cube.aggregate(function, attributes)
         return self
-
-
-
 
