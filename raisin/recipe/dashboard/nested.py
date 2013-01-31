@@ -1,8 +1,9 @@
 import pandas as pd
 import csv
 import itertools
-
+from types import StringType
 MEASURE = None
+
 
 class Coordinates:
 
@@ -71,26 +72,28 @@ class Cube:
         coordinates[attribute] = coordinates[existing_attribute].apply(rollup)
         return cube
 
-    def nest(self, attribute):
+    def nest(self, attributes):
         """
-        Nest the attribute
+        Nest the attributes
         """
-        if not attribute in self.attributes:
+        if type(attributes) is StringType:
+            attributes = [attributes]
+        if not set(attributes).issubset(set(self.attributes)):
             if self.sub_cube is None:
-                raise AttributeError("Attribute not found: %s" % attribute)
+                raise AttributeError("Attributes not found: %s" % attributes)
             # Look for the right level to nest in
-            self.sub_cube = self.sub_cube.nest(attribute)
+            self.sub_cube = self.sub_cube.nest(attributes)
             # Having changed the sub cube in place still return the top one
             return self
         sub_cube = Cube()
         # The attributes of the sub cube don't have the attribute any more
-        sub_cube.attributes = [a for a in self.attributes if a != attribute]
+        sub_cube.attributes = [a for a in self.attributes if not a in attributes]
         # Copy over the coordinates to the sub_cube
         sub_cube.coordinates = self.coordinates
         # Put the sub cube into the current cube
         self.sub_cube = sub_cube
         # The only attribute of the cube is added
-        self.attributes = [attribute]
+        self.attributes = attributes
         return self
 
     def select(self, attribute, value):
@@ -142,3 +145,14 @@ class Cube:
             self.sub_cube.aggregate(function, attributes)
         return self
 
+    def get_dimensions(self, attributes=None):
+        """
+        Get all dimensions except for the last level
+        """
+        if self.sub_cube is None:
+            return attributes
+        if not attributes is None:
+            attributes = attributes + self.attributes
+        else:
+            attributes = self.attributes
+        return self.sub_cube.get_dimensions(attributes)
